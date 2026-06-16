@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-slate-900: #0f172a;
+  --color-slate-800: #1e293b;
+  --color-slate-700: #334155;
+  --color-neon-blue: #3b82f6;
+  --color-neon-blue-light: #60a5fa;
+  --color-neon-blue-dark: #2563eb;
+  --color-accent-green: #10b981;
+  --color-accent-orange: #f59e0b;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-900 text-slate-100 font-sans antialiased;
+  }
+}
+
+/* Custom scrollbar for a sleek look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-700 rounded-full hover:bg-slate-600 transition-colors;
+}
+
+.glass-panel {
+  @apply bg-slate-800/80 backdrop-blur-md border border-slate-700 shadow-xl rounded-xl;
+}
+
+/* Universal Dark/Light Mode Toggle via CSS Filters */
+.theme-inverted {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Re-invert media, maps, and specific colorful elements to keep their original colors */
+.theme-inverted img,
+.theme-inverted canvas,
+.theme-inverted .recharts-wrapper {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Specific background fix for body when inverted */
+body.theme-inverted {
+  background-color: #0f172a; /* Provides the base for inversion to light */
+}
