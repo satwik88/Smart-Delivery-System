@@ -1,12 +1,12 @@
 
-CREATE TABLE warehouses (
+CREATE TABLE IF NOT EXISTS warehouses (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   pos_x FLOAT NOT NULL,
   pos_y FLOAT NOT NULL
 );
 
-CREATE TABLE roads (
+CREATE TABLE IF NOT EXISTS roads (
   id INT AUTO_INCREMENT PRIMARY KEY,
   from_id INT NOT NULL,
   to_id INT NOT NULL,
@@ -16,13 +16,13 @@ CREATE TABLE roads (
   FOREIGN KEY (to_id) REFERENCES warehouses(id) ON DELETE CASCADE
 );
 
-CREATE TABLE vehicles (
+CREATE TABLE IF NOT EXISTS vehicles (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   capacity_weight FLOAT NOT NULL
 );
 
-CREATE TABLE packages (
+CREATE TABLE IF NOT EXISTS packages (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   weight FLOAT NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE packages (
   FOREIGN KEY (destination_warehouse_id) REFERENCES warehouses(id)
 );
 
-CREATE TABLE vehicle_cargo (
+CREATE TABLE IF NOT EXISTS vehicle_cargo (
   id INT AUTO_INCREMENT PRIMARY KEY,
   vehicle_id INT NOT NULL,
   package_id INT NOT NULL,
@@ -40,19 +40,19 @@ CREATE TABLE vehicle_cargo (
   FOREIGN KEY (package_id) REFERENCES packages(id) ON DELETE CASCADE
 );
 
-CREATE TABLE resources (
+CREATE TABLE IF NOT EXISTS resources (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   weight FLOAT NOT NULL,
   value FLOAT NOT NULL
 );
 
-CREATE TABLE tasks (
+CREATE TABLE IF NOT EXISTS tasks (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE task_edges (
+CREATE TABLE IF NOT EXISTS task_edges (
   id INT AUTO_INCREMENT PRIMARY KEY,
   from_task_id INT NOT NULL,
   to_task_id INT NOT NULL,
@@ -60,14 +60,14 @@ CREATE TABLE task_edges (
   FOREIGN KEY (to_task_id) REFERENCES tasks(id) ON DELETE CASCADE
 );
 
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
   id INT AUTO_INCREMENT PRIMARY KEY,
   customer_name VARCHAR(100) NOT NULL,
   budget FLOAT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE order_items (
+CREATE TABLE IF NOT EXISTS order_items (
   id INT AUTO_INCREMENT PRIMARY KEY,
   order_id INT NOT NULL,
   product_name VARCHAR(100) NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE order_items (
   FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
 
-CREATE TABLE benchmark_results (
+CREATE TABLE IF NOT EXISTS benchmark_results (
   id INT AUTO_INCREMENT PRIMARY KEY,
   algorithm_name VARCHAR(50) NOT NULL,
   dataset_size INT NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE benchmark_results (
   run_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
