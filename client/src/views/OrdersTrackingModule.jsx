@@ -11,7 +11,7 @@ const OrdersTrackingModule = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/admin/orders');
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/admin/orders`);
       setOrders(res.data);
     } catch (err) {
       console.error(err);
@@ -20,7 +20,7 @@ const OrdersTrackingModule = () => {
 
   const advanceDelivery = async (id) => {
     try {
-      await axios.post(`http://localhost:5000/api/admin/orders/${id}/advance`);
+      await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/admin/orders/${id}/advance`);
       fetchOrders(); // refresh
     } catch (err) {
       console.error(err);

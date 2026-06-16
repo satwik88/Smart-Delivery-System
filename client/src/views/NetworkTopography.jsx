@@ -19,8 +19,8 @@ const NetworkTopography = () => {
   const fetchData = async () => {
     try {
       const [wRes, rRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/network/warehouses'),
-        axios.get('http://localhost:5000/api/network/roads')
+        axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/warehouses`),
+        axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/roads`)
       ]);
       setWarehouses(wRes.data);
       setRoads(rRes.data);
@@ -80,7 +80,7 @@ const NetworkTopography = () => {
   const runMst = async () => {
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/network/mst', { algorithm });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/mst`, { algorithm });
       setMstResult(res.data);
     } catch (err) {
       console.error(err);

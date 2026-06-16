@@ -14,7 +14,7 @@ const DataSorting = () => {
   const runSorting = async () => {
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/sorting/benchmark', { datasetType, sortKey: 'distance' });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/sorting/benchmark`, { datasetType, sortKey: 'distance' });
       setSortResult(res.data);
     } catch (err) {
       console.error(err);
@@ -26,7 +26,7 @@ const DataSorting = () => {
   const runNQueens = async () => {
     setLoadingQueens(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/placement/place', { n: nSize });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/placement/place`, { n: nSize });
       setNQueensResult(res.data);
     } catch (err) {
       console.error(err);

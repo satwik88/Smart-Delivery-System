@@ -12,21 +12,21 @@ const ResourceAllocation = () => {
 
   const runKnapsack01 = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/cargo/optimize', { vehicleCapacity: capacity });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/cargo/optimize`, { vehicleCapacity: capacity });
       setKnapsackResult(res.data);
     } catch (err) { console.error(err); }
   };
 
   const runFractional = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/resources/allocate', { resourceCapacity: capacity });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/resources/allocate`, { resourceCapacity: capacity });
       setFracResult(res.data);
     } catch (err) { console.error(err); }
   };
 
   const runSubsetSum = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/orders/combinations', { budget });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/orders/combinations`, { budget });
       setSubsetResult(res.data);
     } catch (err) { console.error(err); }
   };

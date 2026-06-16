@@ -13,7 +13,7 @@ const DeliveryRouting = () => {
   useEffect(() => {
     const fetchWarehouses = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/network/warehouses');
+        const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/warehouses`);
         setWarehouses(res.data);
         if (res.data.length > 1) {
           setSourceId(res.data[0].id.toString());
@@ -30,7 +30,7 @@ const DeliveryRouting = () => {
     if (!sourceId || !destId) return;
     setLoading(prev => ({ ...prev, dijkstra: true }));
     try {
-      const res = await axios.post('http://localhost:5000/api/routing/shortest-path', { sourceId, destId });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/routing/shortest-path`, { sourceId, destId });
       setDijkstraResult(res.data);
     } catch (err) {
       console.error(err);
@@ -42,7 +42,7 @@ const DeliveryRouting = () => {
   const runFloydWarshall = async () => {
     setLoading(prev => ({ ...prev, floyd: true }));
     try {
-      const res = await axios.get('http://localhost:5000/api/routing/apsp');
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/routing/apsp`);
       setApspResult(res.data);
     } catch (err) {
       console.error(err);

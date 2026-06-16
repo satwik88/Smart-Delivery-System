@@ -22,7 +22,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/dashboard/summary');
+        const response = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/dashboard/summary`);
         setSummary(response.data);
       } catch (err) {
         console.error("Error fetching summary:", err);

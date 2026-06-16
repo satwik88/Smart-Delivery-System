@@ -34,8 +34,8 @@ const CustomerTrackingPage = () => {
     const fetchNetwork = async () => {
       try {
         const [wRes, rRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/network/warehouses'),
-          axios.get('http://localhost:5000/api/network/roads')
+          axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/warehouses`),
+          axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/roads`)
         ]);
         setWarehouses(wRes.data);
         setRoads(rRes.data);
@@ -50,7 +50,7 @@ const CustomerTrackingPage = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.get(`http://localhost:5000/api/track/${code}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/track/${code}`);
       setOrder(res.data);
     } catch (err) {
       setOrder(null);
