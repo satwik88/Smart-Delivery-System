@@ -10,6 +10,7 @@ async function setupDB() {
             port: process.env.DB_PORT || process.env.MYSQLPORT || 3306,
             user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
             password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || 'rvitm',
+            database: process.env.DB_NAME || process.env.MYSQLDATABASE || 'slrros',
             multipleStatements: true
         });
 
@@ -20,9 +21,6 @@ async function setupDB() {
         console.log('Executing schema.sql...');
         await connection.query(schemaSql);
         console.log('Schema created successfully.');
-
-        // Reconnect specifying the database, just in case
-        await connection.query('USE slrros');
 
         const seedPath = path.join(__dirname, 'seed-data.sql');
         const seedSql = fs.readFileSync(seedPath, 'utf8');
