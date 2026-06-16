@@ -10,12 +10,13 @@ const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
 async function seedOrders() {
     try {
+        require('dotenv').config();
         const connection = await mysql.createConnection({
-            host: 'localhost',
-            port: 3306,
-            user: 'root',
-            password: 'rvitm',
-            database: 'slrros',
+            host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
+            port: process.env.DB_PORT || process.env.MYSQLPORT || 3306,
+            user: process.env.DB_USER || process.env.MYSQLUSER || 'root',
+            password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || 'rvitm',
+            database: process.env.DB_NAME || process.env.MYSQLDATABASE || 'slrros',
             multipleStatements: true
         });
 
