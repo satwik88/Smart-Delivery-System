@@ -22,6 +22,20 @@ async function setupDB() {
         await connection.query(schemaSql);
         console.log('Schema created successfully.');
 
+        try {
+            const alterPath = path.join(__dirname, 'alter.sql');
+            if (fs.existsSync(alterPath)) {
+                let alterSql = fs.readFileSync(alterPath, 'utf8');
+                // Remove hardcoded USE slrros from alter.sql if it exists
+                alterSql = alterSql.replace(/USE slrros;/g, '');
+                console.log('Executing alter.sql...');
+                await connection.query(alterSql);
+                console.log('Alter applied successfully.');
+            }
+        } catch (alterErr) {
+            console.log('Alter skipped (columns likely already exist).');
+        }
+
         const seedPath = path.join(__dirname, 'seed-data.sql');
         const seedSql = fs.readFileSync(seedPath, 'utf8');
         console.log('Executing seed-data.sql...');
