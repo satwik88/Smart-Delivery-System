@@ -1,4 +1,3 @@
-USE slrros;
 
 -- Users
 INSERT INTO users (username, password_hash, role) VALUES ('admin', 'hashed_pw_here', 'admin');
