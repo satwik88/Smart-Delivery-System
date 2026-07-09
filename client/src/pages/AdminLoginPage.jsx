@@ -40,7 +40,7 @@ const AdminLoginPage = () => {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Enter Admin Password:</label>
+            <label className="block text-xs font-medium text-text-muted mb-1">Enter Admin Password:</label>
             <input
               type="password"
               value={password}

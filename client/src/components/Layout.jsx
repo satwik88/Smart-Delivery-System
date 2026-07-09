@@ -9,9 +9,12 @@ import {
   Users, 
   Car, 
   BarChart3,
-  User
+  User,
+  Moon,
+  Sun
 } from 'lucide-react';
 import clsx from 'clsx';
+import { useTheme } from '../context/ThemeContext';
 import CommandPalette from './CommandPalette';
 import NotificationDropdown from './NotificationDropdown';
 import ProfileDropdown from './ProfileDropdown';
@@ -20,6 +23,7 @@ import QuickActions from './QuickActions';
 
 const Layout = () => {
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
   const [isCommandOpen, setIsCommandOpen] = React.useState(false);
   const [isStatusOpen, setIsStatusOpen] = React.useState(false);
 
@@ -35,7 +39,7 @@ const Layout = () => {
   return (
     <div className="min-h-screen bg-surface-bg flex flex-col font-sans text-text-main">
       {/* Top Navigation */}
-      <header className="flex items-center justify-between px-8 py-5 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)] shrink-0 z-20 relative">
+      <header className="flex items-center justify-between px-8 py-5 bg-card-bg shadow-[0_2px_12px_rgba(0,0,0,0.03)] shrink-0 z-20 relative">
         {/* Logo */}
         <div className="flex items-center gap-3">
           <div className="bg-brand-blue p-2.5 rounded-2xl text-white shadow-lg shadow-brand-blue/30">
@@ -76,15 +80,23 @@ const Layout = () => {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => setIsCommandOpen(true)}
-            className="hidden md:flex items-center gap-3 px-4 py-2 bg-gray-50 border border-gray-200 hover:bg-gray-100 rounded-full text-gray-500 transition-colors mr-2"
+            className="hidden md:flex items-center gap-3 px-4 py-2 bg-surface-bg border border-border-main hover:bg-gray-100 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700 rounded-full text-text-muted dark:text-text-muted transition-colors mr-2"
           >
             <Search size={16} />
             <span className="text-sm font-medium">Search...</span>
-            <kbd className="px-1.5 py-0.5 bg-white border border-gray-200 rounded text-[10px] font-bold shadow-sm">CTRL K</kbd>
+            <kbd className="px-1.5 py-0.5 bg-card-bg dark:bg-slate-900 border border-border-main dark:border-slate-700 rounded text-[10px] font-bold shadow-sm">CTRL K</kbd>
+          </button>
+          
+          <button
+            onClick={toggleTheme}
+            className="p-3 bg-surface-bg dark:bg-slate-800 border border-border-main hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full text-text-muted hover:text-text-main transition-colors hover:scale-105 transform active:scale-95 duration-200"
+            title="Toggle Theme"
+          >
+            {theme === 'dark' ? <Sun size={20} strokeWidth={2} /> : <Moon size={20} strokeWidth={2} />}
           </button>
           
           <button 
-            className="md:hidden p-3 bg-gray-50 border border-border-main hover:bg-gray-100 rounded-full text-text-muted hover:text-text-main transition-colors hover:scale-105 transform active:scale-95 duration-200"
+            className="md:hidden p-3 bg-surface-bg border border-border-main hover:bg-gray-100 rounded-full text-text-muted hover:text-text-main transition-colors hover:scale-105 transform active:scale-95 duration-200"
             onClick={() => setIsCommandOpen(true)}
           >
             <Search size={20} strokeWidth={2} />

@@ -49,13 +49,13 @@ const StatusTimeline = ({ currentStatus }) => {
               <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm
                 ${isCompleted ? 'bg-accent-green text-white' : ''}
                 ${isCurrent ? 'bg-neon-blue text-white ring-4 ring-neon-blue/20' : ''}
-                ${isFuture ? 'bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 text-slate-400 dark:text-slate-500' : ''}
+                ${isFuture ? 'bg-card-bg dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 text-text-muted dark:text-text-muted' : ''}
               `}>
                 <Icon size={18} strokeWidth={isCompleted || isCurrent ? 3 : 2} />
               </div>
               <div className="mt-3 text-center">
                 <p className={`text-xs font-semibold tracking-wide uppercase ${
-                  isCurrent ? 'text-slate-900 dark:text-slate-100' : isCompleted ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500'
+                  isCurrent ? 'text-text-main dark:text-slate-100' : isCompleted ? 'text-slate-700 dark:text-slate-300' : 'text-text-muted dark:text-text-muted'
                 }`}>
                   {step.label}
                 </p>

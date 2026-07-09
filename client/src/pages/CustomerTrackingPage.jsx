@@ -75,11 +75,11 @@ const CustomerTrackingPage = () => {
   const getStatusColor = (status) => {
     if (status === 'delivered') return 'text-green-500 bg-green-50';
     if (status === 'in_transit' || status === 'dispatched') return 'text-brand-blue bg-blue-50';
-    return 'text-gray-500 bg-gray-100';
+    return 'text-text-muted bg-gray-100';
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F5FF] text-gray-900 font-sans flex flex-col selection:bg-brand-blue selection:text-white relative">
+    <div className="min-h-screen bg-[#F4F5FF] text-text-main font-sans flex flex-col selection:bg-brand-blue selection:text-white relative">
       
       {/* Background Blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -89,8 +89,8 @@ const CustomerTrackingPage = () => {
 
       <nav className="relative z-10 p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
         <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <ChevronLeft size={20} className="text-gray-400" />
-          <span className="font-bold text-gray-500">Back to Home</span>
+          <ChevronLeft size={20} className="text-text-muted" />
+          <span className="font-bold text-text-muted">Back to Home</span>
         </Link>
         <Link to="/admin" className="text-sm font-bold text-brand-blue hover:underline">Admin Login</Link>
       </nav>
@@ -102,11 +102,11 @@ const CustomerTrackingPage = () => {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} 
           className="text-center max-w-2xl mx-auto w-full"
         >
-          <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-6 text-brand-blue border border-gray-100">
+          <div className="w-16 h-16 bg-card-bg rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-6 text-brand-blue border border-border-main">
             <Package size={32} />
           </div>
           <h1 className="text-4xl font-black mb-4">Track your package</h1>
-          <p className="text-gray-500 font-medium mb-8">Enter your tracking code to get live ETA and driver details.</p>
+          <p className="text-text-muted font-medium mb-8">Enter your tracking code to get live ETA and driver details.</p>
           
           <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
@@ -115,9 +115,9 @@ const CustomerTrackingPage = () => {
                 value={trackingCode}
                 onChange={(e) => setTrackingCode(e.target.value)}
                 placeholder="e.g. TRK-89231..."
-                className="w-full bg-white/60 backdrop-blur-md border border-white rounded-2xl pl-12 pr-4 py-4 text-gray-900 shadow-xl shadow-brand-blue/5 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-white transition-all text-lg font-medium"
+                className="w-full bg-card-bg/60 backdrop-blur-md border border-white rounded-2xl pl-12 pr-4 py-4 text-text-main shadow-xl shadow-brand-blue/5 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-card-bg transition-all text-lg font-medium"
               />
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={24} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={24} />
             </div>
             <button 
               type="submit" 
@@ -141,7 +141,7 @@ const CustomerTrackingPage = () => {
               <div className="flex-1 flex flex-col gap-6">
                 
                 {/* Live Map Glass Card */}
-                <div className="bg-white/70 backdrop-blur-xl p-3 rounded-3xl shadow-xl shadow-brand-blue/5 border border-white h-[400px] overflow-hidden">
+                <div className="bg-card-bg/70 backdrop-blur-xl p-3 rounded-3xl shadow-xl shadow-brand-blue/5 border border-white h-[400px] overflow-hidden">
                   <MapContainer center={[28.6, 77.2]} zoom={10} style={{ height: '100%', width: '100%', borderRadius: '1.25rem' }} zoomControl={false}>
                     <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
                     {order.source?.lat && <Marker position={[order.source.lat, order.source.lng]} icon={warehouseIcon}><Popup>Origin: {order.source.name}</Popup></Marker>}
@@ -163,22 +163,22 @@ const CustomerTrackingPage = () => {
 
                 {/* Driver & Vehicle Details */}
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="flex-1 bg-white/70 backdrop-blur-xl p-6 rounded-3xl shadow-lg shadow-gray-200/40 border border-white flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                  <div className="flex-1 bg-card-bg/70 backdrop-blur-xl p-6 rounded-3xl shadow-lg shadow-gray-200/40 border border-white flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-text-muted">
                       <User size={24} />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Your Driver</p>
-                      <p className="font-bold text-gray-900">{order.driverName || "Assigning..."}</p>
+                      <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Your Driver</p>
+                      <p className="font-bold text-text-main">{order.driverName || "Assigning..."}</p>
                     </div>
                   </div>
-                  <div className="flex-1 bg-white/70 backdrop-blur-xl p-6 rounded-3xl shadow-lg shadow-gray-200/40 border border-white flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                  <div className="flex-1 bg-card-bg/70 backdrop-blur-xl p-6 rounded-3xl shadow-lg shadow-gray-200/40 border border-white flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-text-muted">
                       <Truck size={24} />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Vehicle</p>
-                      <p className="font-bold text-gray-900">{order.vehicleName || "Unknown"}</p>
+                      <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Vehicle</p>
+                      <p className="font-bold text-text-main">{order.vehicleName || "Unknown"}</p>
                     </div>
                   </div>
                 </div>
@@ -189,32 +189,32 @@ const CustomerTrackingPage = () => {
               <div className="w-full lg:w-[380px] flex flex-col gap-6">
                 
                 {/* Main Status Card */}
-                <div className="bg-white/70 backdrop-blur-xl p-8 rounded-3xl shadow-xl shadow-brand-blue/5 border border-white">
+                <div className="bg-card-bg/70 backdrop-blur-xl p-8 rounded-3xl shadow-xl shadow-brand-blue/5 border border-white">
                   <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-6 ${getStatusColor(order.status)}`}>
                     {order.status.replace('_', ' ')}
                   </div>
                   
                   <div className="mb-8">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Estimated Delivery</p>
-                    <p className="text-3xl font-black text-gray-900">{order.status === 'delivered' ? 'Delivered' : `~${Math.max(10, Math.round(order.totalDistance))} mins`}</p>
+                    <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-1">Estimated Delivery</p>
+                    <p className="text-3xl font-black text-text-main">{order.status === 'delivered' ? 'Delivered' : `~${Math.max(10, Math.round(order.totalDistance))} mins`}</p>
                   </div>
 
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                      <span className="text-sm font-semibold text-gray-500 flex items-center gap-2"><MapPin size={16}/> From</span>
+                    <div className="flex justify-between items-center py-3 border-b border-border-main">
+                      <span className="text-sm font-semibold text-text-muted flex items-center gap-2"><MapPin size={16}/> From</span>
                       <span className="text-sm font-bold">{order.source?.name || "Warehouse"}</span>
                     </div>
-                    <div className="flex justify-between items-center py-3 border-b border-gray-100">
-                      <span className="text-sm font-semibold text-gray-500 flex items-center gap-2"><MapPin size={16}/> To</span>
+                    <div className="flex justify-between items-center py-3 border-b border-border-main">
+                      <span className="text-sm font-semibold text-text-muted flex items-center gap-2"><MapPin size={16}/> To</span>
                       <span className="text-sm font-bold">{order.destination?.name || "Customer"}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Timeline Card */}
-                <div className="bg-white/70 backdrop-blur-xl p-8 rounded-3xl shadow-xl shadow-brand-blue/5 border border-white flex-1">
+                <div className="bg-card-bg/70 backdrop-blur-xl p-8 rounded-3xl shadow-xl shadow-brand-blue/5 border border-white flex-1">
                   <h3 className="font-bold text-lg mb-6">Order Timeline</h3>
-                  <div className="relative pl-6 border-l-2 border-gray-100 space-y-8">
+                  <div className="relative pl-6 border-l-2 border-border-main space-y-8">
                     {order.taskSequence?.map((task, idx) => {
                       const isCompleted = idx < order.currentTaskIndex;
                       const isCurrent = idx === order.currentTaskIndex;
@@ -225,8 +225,8 @@ const CustomerTrackingPage = () => {
                             {isCompleted && <CheckCircle2 size={12} className="text-white" />}
                           </div>
                           <div>
-                            <p className={`font-bold text-sm ${isCurrent ? 'text-brand-blue' : isCompleted ? 'text-gray-900' : 'text-gray-400'}`}>{task}</p>
-                            {isCurrent && <p className="text-xs font-semibold text-gray-500 mt-1">In progress...</p>}
+                            <p className={`font-bold text-sm ${isCurrent ? 'text-brand-blue' : isCompleted ? 'text-text-main' : 'text-text-muted'}`}>{task}</p>
+                            {isCurrent && <p className="text-xs font-semibold text-text-muted mt-1">In progress...</p>}
                           </div>
                         </div>
                       )

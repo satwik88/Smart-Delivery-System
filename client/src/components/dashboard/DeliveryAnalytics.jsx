@@ -10,7 +10,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center gap-2 text-sm">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span className="text-slate-400">{entry.name}:</span>
+            <span className="text-text-muted">{entry.name}:</span>
             <span className="text-white font-bold">{entry.name === 'revenue' ? '$' : ''}{entry.value}</span>
           </div>
         ))}
@@ -46,7 +46,7 @@ const DeliveryAnalytics = () => {
     <div className="premium-card p-8 flex flex-col gap-8 relative">
       
       {/* Mocked indicator for future DB integration */}
-      <div className="absolute top-4 left-4 bg-gray-100 text-gray-500 text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wider">
+      <div className="absolute top-4 left-4 bg-gray-100 text-text-muted text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wider">
         Mocked Data (Pending DB)
       </div>
 
@@ -58,7 +58,7 @@ const DeliveryAnalytics = () => {
         
         {/* Dropdown */}
         <div className="relative group cursor-pointer">
-          <div className="bg-gray-50 border border-border-main rounded-full px-5 py-2 flex items-center gap-2 hover:bg-gray-100 transition-colors">
+          <div className="bg-surface-bg border border-border-main rounded-full px-5 py-2 flex items-center gap-2 hover:bg-gray-100 transition-colors">
             <span className="text-sm font-bold text-text-main">{timeRange}</span>
             <ChevronDown size={16} className="text-text-muted group-hover:text-text-main" />
           </div>
@@ -66,7 +66,7 @@ const DeliveryAnalytics = () => {
       </div>
 
       {/* Metrics Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 py-4 border-y border-gray-100">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 py-4 border-y border-border-main">
         {metrics.map((m, i) => (
           <div key={i} className="flex flex-col gap-1">
             <span className="text-xs font-bold text-text-muted uppercase tracking-wider">{m.label}</span>

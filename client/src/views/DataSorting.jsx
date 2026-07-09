@@ -39,7 +39,7 @@ const DataSorting = () => {
     <div className="flex flex-col h-full gap-6 relative z-10 overflow-auto pb-8">
       <div className="glass-panel p-6 shrink-0">
         <h2 className="text-xl font-bold text-slate-100">Order Analytics & Placement</h2>
-        <p className="text-sm text-slate-400">Analyze delivery metrics and determine strategic facility placements.</p>
+        <p className="text-sm text-text-muted">Analyze delivery metrics and determine strategic facility placements.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -76,7 +76,7 @@ const DataSorting = () => {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="text-xs text-slate-400">Note: For small datasets, time differences may be negligible.</div>
+              <div className="text-xs text-text-muted">Note: For small datasets, time differences may be negligible.</div>
             </div>
           )}
         </div>
@@ -96,12 +96,12 @@ const DataSorting = () => {
             <div className="flex-1 bg-slate-900/50 p-4 rounded border border-slate-800 flex flex-col">
               <div className="mb-4 text-sm text-slate-300">
                 <span className="text-accent-green font-bold mr-4">{nQueensResult.result.count} Solutions</span>
-                <span className="text-slate-400">Ops: {nQueensResult.metrics.comparisons}</span>
+                <span className="text-text-muted">Ops: {nQueensResult.metrics.comparisons}</span>
               </div>
               
               {nQueensResult.result.solutions.length > 0 && (
                 <div className="flex-1 overflow-auto">
-                  <p className="text-xs text-slate-500 mb-2">Displaying Solution #1</p>
+                  <p className="text-xs text-text-muted mb-2">Displaying Solution #1</p>
                   <div 
                     className="grid gap-1 max-w-sm mx-auto" 
                     style={{ gridTemplateColumns: `repeat(${nSize}, minmax(0, 1fr))` }}

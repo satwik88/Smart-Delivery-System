@@ -57,7 +57,7 @@ const DeliveryRouting = () => {
     <div className="flex flex-col h-full gap-6 relative z-10">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-slate-100">Active Routes</h2>
-        <p className="text-sm text-slate-400">Compute optimal delivery paths and view network-wide routing metrics.</p>
+        <p className="text-sm text-text-muted">Compute optimal delivery paths and view network-wide routing metrics.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0">
@@ -90,7 +90,7 @@ const DeliveryRouting = () => {
             {dijkstraResult ? (
               <div>
                 <div className="mb-4">
-                  <span className="text-slate-400">Total Distance: </span>
+                  <span className="text-text-muted">Total Distance: </span>
                   <span className="text-xl font-bold text-accent-green">{dijkstraResult.result.distance} km</span>
                 </div>
                 <div className="flex flex-wrap items-center gap-2 text-sm text-slate-300 mb-6">
@@ -101,14 +101,14 @@ const DeliveryRouting = () => {
                     </React.Fragment>
                   ))}
                 </div>
-                <h4 className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Execution Log</h4>
+                <h4 className="text-xs font-semibold text-text-muted mb-2 uppercase tracking-wider">Execution Log</h4>
                 <div className="space-y-1">
                   {dijkstraResult.steps.map((s, i) => (
-                    <div key={i} className="text-xs font-mono text-slate-400"><span className="text-neon-blue/50">[{i}]</span> {s}</div>
+                    <div key={i} className="text-xs font-mono text-text-muted"><span className="text-neon-blue/50">[{i}]</span> {s}</div>
                   ))}
                 </div>
               </div>
-            ) : <p className="text-slate-500 italic text-sm">Select locations and click Route.</p>}
+            ) : <p className="text-text-muted italic text-sm">Select locations and click Route.</p>}
           </div>
         </div>
 
@@ -127,14 +127,14 @@ const DeliveryRouting = () => {
           <div className="flex-1 bg-slate-900/50 rounded border border-slate-800 p-4 overflow-auto min-w-0">
             {apspResult ? (
               <div className="min-w-max">
-                <div className="mb-4 text-xs font-mono text-slate-400">
+                <div className="mb-4 text-xs font-mono text-text-muted">
                   <span className="text-slate-300">Execution Time:</span> {apspResult.metrics.time.toFixed(2)}ms | 
                   <span className="text-slate-300 ml-2">Ops:</span> {apspResult.metrics.comparisons}
                 </div>
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr>
-                      <th className="p-2 border-b border-slate-700 text-slate-500 text-xs">Node \ Node</th>
+                      <th className="p-2 border-b border-slate-700 text-text-muted text-xs">Node \ Node</th>
                       {apspResult.result.nodeIds.map((id) => (
                         <th key={id} className="p-2 border-b border-slate-700 text-slate-300 text-xs font-mono">W{id}</th>
                       ))}
@@ -145,7 +145,7 @@ const DeliveryRouting = () => {
                       <tr key={i} className="hover:bg-slate-800/30">
                         <td className="p-2 border-b border-slate-800 text-slate-300 text-xs font-mono font-bold">W{apspResult.result.nodeIds[i]}</td>
                         {row.map((dist, j) => (
-                          <td key={j} className={`p-2 border-b border-slate-800 text-xs font-mono ${dist === Infinity ? 'text-slate-600' : dist === 0 ? 'text-slate-500' : 'text-accent-green'}`}>
+                          <td key={j} className={`p-2 border-b border-slate-800 text-xs font-mono ${dist === Infinity ? 'text-slate-600' : dist === 0 ? 'text-text-muted' : 'text-accent-green'}`}>
                             {dist === Infinity ? '∞' : dist}
                           </td>
                         ))}
@@ -154,7 +154,7 @@ const DeliveryRouting = () => {
                   </tbody>
                 </table>
               </div>
-            ) : <p className="text-slate-500 italic text-sm">Click Compute Matrix to generate all-pairs distances.</p>}
+            ) : <p className="text-text-muted italic text-sm">Click Compute Matrix to generate all-pairs distances.</p>}
           </div>
         </div>
 

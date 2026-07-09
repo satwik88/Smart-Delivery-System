@@ -35,7 +35,7 @@ const ResourceAllocation = () => {
     <div className="flex flex-col h-full gap-6 relative z-10 overflow-auto pb-8">
       <div className="glass-panel p-6 shrink-0">
         <h2 className="text-xl font-bold text-slate-100">Fleet Management</h2>
-        <p className="text-sm text-slate-400">Optimize vehicle loading and bundle orders for maximum efficiency.</p>
+        <p className="text-sm text-text-muted">Optimize vehicle loading and bundle orders for maximum efficiency.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -57,7 +57,7 @@ const ResourceAllocation = () => {
                 {knapsackResult.result.selected.map((item, i) => (
                   <div key={i} className="flex justify-between text-slate-300">
                     <span>{item.name}</span>
-                    <span className="text-slate-500">W:{item.weight} V:${item.value}</span>
+                    <span className="text-text-muted">W:{item.weight} V:${item.value}</span>
                   </div>
                 ))}
               </div>
@@ -82,7 +82,7 @@ const ResourceAllocation = () => {
                 {fracResult.result.allocation.map((alloc, i) => (
                   <div key={i} className="flex justify-between text-slate-300">
                     <span>{alloc.item.name} <span className="text-xs text-purple-400 ml-1">{(alloc.fraction*100).toFixed(0)}%</span></span>
-                    <span className="text-slate-500">Take:{alloc.take} V:${(alloc.item.value * alloc.fraction).toFixed(2)}</span>
+                    <span className="text-text-muted">Take:{alloc.take} V:${(alloc.item.value * alloc.fraction).toFixed(2)}</span>
                   </div>
                 ))}
               </div>
@@ -103,11 +103,11 @@ const ResourceAllocation = () => {
           {subsetResult && (
             <div className="bg-slate-900/50 p-4 rounded border border-slate-800 text-sm">
               <div className="mb-2">
-                <span className="text-slate-400">Exact Match: </span>
+                <span className="text-text-muted">Exact Match: </span>
                 <span className={subsetResult.result.exactMatch ? "text-accent-green font-bold" : "text-red-400 font-bold"}>
                   {subsetResult.result.exactMatch ? "YES" : "NO"}
                 </span>
-                <div className="text-xs text-slate-500">Closest Sum: ${subsetResult.result.actualSum}</div>
+                <div className="text-xs text-text-muted">Closest Sum: ${subsetResult.result.actualSum}</div>
               </div>
               <div className="text-slate-300 mb-1 font-semibold">{subsetResult.result.subsets.length} Combinations Found</div>
               <div className="h-40 overflow-y-auto space-y-2 pr-2">

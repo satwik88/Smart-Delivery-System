@@ -49,7 +49,7 @@ const MapCanvas = ({ warehouses, roads, route, progressPct, sourceId, destId }) 
   const truckPos = getTruckPos();
 
   return (
-    <div className="w-full h-full relative bg-slate-50/50 rounded-xl border border-slate-200 overflow-hidden">
+    <div className="w-full h-full relative bg-surface-bg/50 rounded-xl border border-border-main overflow-hidden">
       <svg viewBox={viewBox} className="w-full h-full drop-shadow-sm">
         
         {/* Draw City Blocks Background */}

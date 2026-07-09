@@ -46,7 +46,7 @@ const RecentOrdersTable = () => {
   }, []);
 
   if (loading) {
-    return <div className="premium-card p-8 h-[400px] flex items-center justify-center font-bold text-gray-400">Loading Orders...</div>;
+    return <div className="premium-card p-8 h-[400px] flex items-center justify-center font-bold text-text-muted">Loading Orders...</div>;
   }
 
   return (
@@ -59,7 +59,7 @@ const RecentOrdersTable = () => {
       <div className="flex-1 overflow-auto pr-2">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-gray-100">
+            <tr className="border-b border-border-main">
               <th className="py-3 px-2 text-xs font-bold text-text-muted uppercase tracking-wider">Order ID</th>
               <th className="py-3 px-2 text-xs font-bold text-text-muted uppercase tracking-wider">Customer</th>
               <th className="py-3 px-2 text-xs font-bold text-text-muted uppercase tracking-wider">Route</th>
@@ -72,7 +72,7 @@ const RecentOrdersTable = () => {
           </thead>
           <tbody>
             {orders.map((order, idx) => (
-              <tr key={order.id || idx} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
+              <tr key={order.id || idx} className="border-b border-gray-50 hover:bg-surface-bg/50 transition-colors group">
                 <td className="py-4 px-2 font-bold text-text-main text-sm">#{order.tracking_code || `ORD-${order.id}`}</td>
                 <td className="py-4 px-2 font-semibold text-text-main text-sm">{order.customer_name}</td>
                 <td className="py-4 px-2 text-text-muted text-xs font-medium">
@@ -85,14 +85,14 @@ const RecentOrdersTable = () => {
                   {order.status === 'delivered' ? '-' : '24 mins'}
                 </td>
                 <td className="py-4 px-2 text-right">
-                  <button className="p-1.5 text-gray-400 hover:text-text-main rounded-md hover:bg-gray-200 transition-colors opacity-0 group-hover:opacity-100">
+                  <button className="p-1.5 text-text-muted hover:text-text-main rounded-md hover:bg-gray-200 transition-colors opacity-0 group-hover:opacity-100">
                     <MoreHorizontal size={16} />
                   </button>
                 </td>
               </tr>
             ))}
             {orders.length === 0 && (
-              <tr><td colSpan="6" className="text-center py-8 text-gray-400 font-medium">No orders found.</td></tr>
+              <tr><td colSpan="6" className="text-center py-8 text-text-muted font-medium">No orders found.</td></tr>
             )}
           </tbody>
         </table>

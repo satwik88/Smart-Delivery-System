@@ -17,15 +17,15 @@ const AdminDrivers = () => {
   const getStatusColor = (status) => {
     if (status === 'Available') return 'bg-green-100 text-green-700';
     if (status === 'On Delivery') return 'bg-brand-blue/10 text-brand-blue';
-    return 'bg-gray-100 text-gray-500';
+    return 'bg-gray-100 text-text-muted';
   };
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-black text-gray-900">Drivers ({MOCK_DRIVERS.length})</h1>
-          <p className="text-gray-500 font-medium">Manage fleet operators and availability.</p>
+          <h1 className="text-3xl font-black text-text-main">Drivers ({MOCK_DRIVERS.length})</h1>
+          <p className="text-text-muted font-medium">Manage fleet operators and availability.</p>
         </div>
         <div className="flex gap-4">
           <div className="relative">
@@ -34,11 +34,11 @@ const AdminDrivers = () => {
               placeholder="Search driver..." 
               value={searchTerm}
               onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
-              className="bg-white border border-gray-200 rounded-full pl-10 pr-4 py-2 text-sm font-medium focus:ring-2 focus:ring-brand-blue outline-none"
+              className="bg-card-bg border border-border-main rounded-full pl-10 pr-4 py-2 text-sm font-medium focus:ring-2 focus:ring-brand-blue outline-none"
             />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
           </div>
-          <button className="bg-white border border-gray-200 rounded-full px-4 py-2 text-sm font-bold flex items-center gap-2 hover:bg-gray-50">
+          <button className="bg-card-bg border border-border-main rounded-full px-4 py-2 text-sm font-bold flex items-center gap-2 hover:bg-surface-bg">
             <Filter size={16} /> Filters
           </button>
           <button className="bg-brand-blue text-white rounded-full px-5 py-2 text-sm font-bold hover:bg-brand-dark transition-colors shadow-md shadow-brand-blue/20">
@@ -57,7 +57,7 @@ const AdminDrivers = () => {
             className="premium-card p-6 flex flex-col gap-4 relative group"
           >
             <div className="flex justify-between items-start">
-              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center font-black text-gray-400">
+              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center font-black text-text-muted">
                 {driver.name.charAt(0)}
               </div>
               <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${getStatusColor(driver.status)}`}>
@@ -66,8 +66,8 @@ const AdminDrivers = () => {
             </div>
             
             <div>
-              <h3 className="font-bold text-lg text-gray-900">{driver.name}</h3>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{driver.id}</p>
+              <h3 className="font-bold text-lg text-text-main">{driver.name}</h3>
+              <p className="text-xs font-bold text-text-muted uppercase tracking-wider">{driver.id}</p>
             </div>
 
             <div className="space-y-2 mt-2">
@@ -78,14 +78,14 @@ const AdminDrivers = () => {
                 <Truck size={16} className="text-brand-blue" /> {driver.vehicle}
               </div>
               <div className="flex items-center gap-3 text-sm text-gray-600 font-medium">
-                <Phone size={16} className="text-gray-400" /> {driver.phone}
+                <Phone size={16} className="text-text-muted" /> {driver.phone}
               </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+            <div className="mt-4 pt-4 border-t border-border-main flex justify-between items-center">
               <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Deliveries</p>
-                <p className="font-black text-gray-900">{driver.deliveries}</p>
+                <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Deliveries</p>
+                <p className="font-black text-text-main">{driver.deliveries}</p>
               </div>
               <button className="w-8 h-8 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center hover:bg-brand-blue hover:text-white transition-colors">
                 <Navigation size={14} />
@@ -97,21 +97,21 @@ const AdminDrivers = () => {
 
       {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
-        <p className="text-sm font-semibold text-gray-500">
+        <p className="text-sm font-semibold text-text-muted">
           Showing {(page-1)*itemsPerPage + 1} to {Math.min(page*itemsPerPage, filtered.length)} of {filtered.length} drivers
         </p>
         <div className="flex gap-2">
           <button 
             disabled={page === 1} 
             onClick={() => setPage(p => p - 1)}
-            className="px-4 py-2 rounded-full border border-gray-200 text-sm font-bold disabled:opacity-50 hover:bg-gray-50"
+            className="px-4 py-2 rounded-full border border-border-main text-sm font-bold disabled:opacity-50 hover:bg-surface-bg"
           >
             Prev
           </button>
           <button 
             disabled={page * itemsPerPage >= filtered.length} 
             onClick={() => setPage(p => p + 1)}
-            className="px-4 py-2 rounded-full border border-gray-200 text-sm font-bold disabled:opacity-50 hover:bg-gray-50"
+            className="px-4 py-2 rounded-full border border-border-main text-sm font-bold disabled:opacity-50 hover:bg-surface-bg"
           >
             Next
           </button>

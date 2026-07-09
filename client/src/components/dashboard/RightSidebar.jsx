@@ -7,7 +7,7 @@ const RightSidebar = () => {
       
       {/* Pending Tasks */}
       <div className="premium-card p-6 relative">
-        <div className="absolute top-2 left-4 bg-gray-100 text-gray-400 text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Mocked</div>
+        <div className="absolute top-2 left-4 bg-gray-100 text-text-muted text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Mocked</div>
         <div className="flex justify-between items-center mb-6 mt-2">
           <h3 className="font-bold text-text-main text-lg">Pending Tasks</h3>
           <span className="bg-brand-blue/10 text-brand-blue text-[11px] px-3 py-1 rounded-full font-bold">4 Tasks</span>
@@ -24,13 +24,13 @@ const RightSidebar = () => {
             </div>
             <div className="flex flex-col items-end gap-3">
               <span className="text-[10px] font-bold text-text-muted">10:30 AM</span>
-              <div className="bg-white shadow-sm border border-border-main p-1.5 rounded-full group-hover:bg-brand-blue group-hover:text-white transition-colors">
+              <div className="bg-card-bg shadow-sm border border-border-main p-1.5 rounded-full group-hover:bg-brand-blue group-hover:text-white transition-colors">
                 <ChevronRight size={14} />
               </div>
             </div>
           </div>
 
-          <div className="bg-white border border-border-main p-4 rounded-2xl flex justify-between items-center hover:border-brand-blue/30 transition-colors group cursor-pointer">
+          <div className="bg-card-bg border border-border-main p-4 rounded-2xl flex justify-between items-center hover:border-brand-blue/30 transition-colors group cursor-pointer">
             <div>
               <p className="text-brand-blue text-[10px] uppercase font-bold tracking-wider mb-1">Order #A240</p>
               <h4 className="font-bold text-text-main text-sm">Verify Payment</h4>
@@ -38,7 +38,7 @@ const RightSidebar = () => {
             </div>
             <div className="flex flex-col items-end gap-3">
               <span className="text-[10px] font-bold text-text-muted">11:00 AM</span>
-              <div className="bg-gray-50 border border-border-main p-1.5 rounded-full group-hover:bg-brand-blue group-hover:text-white transition-colors">
+              <div className="bg-surface-bg border border-border-main p-1.5 rounded-full group-hover:bg-brand-blue group-hover:text-white transition-colors">
                 <ChevronRight size={14} />
               </div>
             </div>
@@ -51,7 +51,7 @@ const RightSidebar = () => {
         <h3 className="font-bold text-text-main text-lg mb-6">Current Delivery</h3>
         
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+          <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center text-text-muted">
             <User size={24} />
           </div>
           <div>
@@ -85,7 +85,7 @@ const RightSidebar = () => {
 
       {/* Driver Performance */}
       <div className="premium-card p-6 relative">
-        <div className="absolute top-2 left-4 bg-gray-100 text-gray-400 text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Mocked</div>
+        <div className="absolute top-2 left-4 bg-gray-100 text-text-muted text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Mocked</div>
         <div className="flex justify-between items-center mb-6 mt-2">
           <h3 className="font-bold text-text-main text-lg">Top Drivers</h3>
         </div>
@@ -141,13 +141,13 @@ const RightSidebar = () => {
         <div className="absolute right-4 top-12 w-20 h-20 border-[4px] border-white/5 rounded-full group-hover:-translate-x-2 transition-transform duration-700"></div>
         
         <div className="relative z-10">
-          <span className="inline-block bg-white/20 text-white text-[10px] px-3 py-1 rounded-full font-bold backdrop-blur-md uppercase tracking-wider">
+          <span className="inline-block bg-card-bg/20 text-white text-[10px] px-3 py-1 rounded-full font-bold backdrop-blur-md uppercase tracking-wider">
             AI Optimization
           </span>
         </div>
         <div className="relative z-10 flex justify-between items-end">
           <h4 className="font-black text-lg leading-tight w-3/4">Reduce delivery time by 24%</h4>
-          <div className="w-8 h-8 rounded-full bg-white/20 flex justify-center items-center backdrop-blur-md group-hover:bg-white transition-colors group-hover:text-brand-blue">
+          <div className="w-8 h-8 rounded-full bg-card-bg/20 flex justify-center items-center backdrop-blur-md group-hover:bg-card-bg transition-colors group-hover:text-brand-blue">
             <ChevronRight size={16} />
           </div>
         </div>

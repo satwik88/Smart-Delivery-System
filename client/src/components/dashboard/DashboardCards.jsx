@@ -36,11 +36,11 @@ const DashboardCards = ({ summary }) => {
       {/* Card 2: Active Deliveries (Solid Blue) */}
       <div className="premium-card p-6 flex flex-col justify-between h-48 bg-brand-blue border-transparent text-white relative overflow-hidden group">
         {/* Glow effect */}
-        <div className="absolute -top-12 -right-12 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all duration-700"></div>
+        <div className="absolute -top-12 -right-12 w-32 h-32 bg-card-bg/10 rounded-full blur-2xl group-hover:bg-card-bg/20 transition-all duration-700"></div>
         
         <div className="flex justify-between items-center relative z-10">
           <span className="text-blue-100 font-bold text-sm">Active Deliveries</span>
-          <span className="bg-white/10 backdrop-blur-sm text-white text-[11px] px-3 py-1 rounded-full font-bold cursor-pointer hover:bg-white/20 transition-colors">Currently In Transit</span>
+          <span className="bg-card-bg/10 backdrop-blur-sm text-white text-[11px] px-3 py-1 rounded-full font-bold cursor-pointer hover:bg-card-bg/20 transition-colors">Currently In Transit</span>
         </div>
         <div className="mt-4 flex items-end gap-3 relative z-10">
           <span className="text-[2.75rem] leading-none font-black">{summary?.tasks || 356}</span>

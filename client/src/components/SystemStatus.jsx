@@ -25,10 +25,10 @@ const SystemStatus = ({ isOpen, onClose }) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-16 right-4 sm:right-24 w-[320px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-50 origin-top-right"
+            className="absolute top-16 right-4 sm:right-24 w-[320px] bg-card-bg rounded-2xl shadow-2xl border border-border-main p-5 z-50 origin-top-right"
           >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-gray-900">System Status</h3>
+              <h3 className="font-bold text-text-main">System Status</h3>
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                 <span className="text-xs font-bold text-green-500 uppercase tracking-wider">Online</span>

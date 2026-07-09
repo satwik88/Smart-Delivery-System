@@ -8,8 +8,8 @@ const AdminProfile = () => {
   return (
     <div className="flex flex-col gap-8 max-w-5xl mx-auto w-full pb-12">
       <div>
-        <h1 className="text-3xl font-black text-gray-900">My Profile</h1>
-        <p className="text-gray-500 font-medium mt-1">Manage your personal information and security preferences.</p>
+        <h1 className="text-3xl font-black text-text-main">My Profile</h1>
+        <p className="text-text-muted font-medium mt-1">Manage your personal information and security preferences.</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">
@@ -41,13 +41,13 @@ const AdminProfile = () => {
                   <div className="w-24 h-24 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue font-black text-3xl">
                     SR
                   </div>
-                  <button className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-md border border-gray-100 text-gray-500 hover:text-brand-blue opacity-0 group-hover:opacity-100 transition-all hover:scale-110">
+                  <button className="absolute bottom-0 right-0 p-2 bg-card-bg rounded-full shadow-md border border-border-main text-text-muted hover:text-brand-blue opacity-0 group-hover:opacity-100 transition-all hover:scale-110">
                     <Edit3 size={14} />
                   </button>
                 </div>
                 <div className="text-center sm:text-left flex-1 mt-2">
-                  <h2 className="text-2xl font-bold text-gray-900">Satwik Raj</h2>
-                  <p className="text-gray-500 font-medium">Administrator</p>
+                  <h2 className="text-2xl font-bold text-text-main">Satwik Raj</h2>
+                  <p className="text-text-muted font-medium">Administrator</p>
                 </div>
               </div>
 
@@ -56,31 +56,31 @@ const AdminProfile = () => {
                 <h3 className="font-bold text-lg mb-6">Personal Information</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Full Name</label>
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Full Name</label>
                     <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                      <input type="text" defaultValue="Satwik Raj" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-white transition-all" />
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
+                      <input type="text" defaultValue="Satwik Raj" className="w-full bg-surface-bg border border-border-main rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-card-bg transition-all" />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Email Address</label>
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Email Address</label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                      <input type="email" defaultValue="admin@smartdelivery.com" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-white transition-all" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
+                      <input type="email" defaultValue="admin@smartdelivery.com" className="w-full bg-surface-bg border border-border-main rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-card-bg transition-all" />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Phone Number</label>
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Phone Number</label>
                     <div className="relative">
-                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                      <input type="tel" defaultValue="+1 (555) 000-0000" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-white transition-all" />
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
+                      <input type="tel" defaultValue="+1 (555) 000-0000" className="w-full bg-surface-bg border border-border-main rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-card-bg transition-all" />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Company / Branch</label>
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Company / Branch</label>
                     <div className="relative">
-                      <Building className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                      <input type="text" defaultValue="Headquarters" disabled className="w-full bg-gray-100 border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm font-semibold text-gray-500 cursor-not-allowed" />
+                      <Building className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
+                      <input type="text" defaultValue="Headquarters" disabled className="w-full bg-gray-100 border border-border-main rounded-xl pl-11 pr-4 py-3 text-sm font-semibold text-text-muted cursor-not-allowed" />
                     </div>
                   </div>
                 </div>
@@ -99,15 +99,15 @@ const AdminProfile = () => {
 
               {/* Password */}
               <div className="premium-card p-8">
-                <h3 className="font-bold text-lg mb-6 flex items-center gap-2"><Key size={20} className="text-gray-400" /> Change Password</h3>
+                <h3 className="font-bold text-lg mb-6 flex items-center gap-2"><Key size={20} className="text-text-muted" /> Change Password</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Current Password</label>
-                    <input type="password" placeholder="••••••••" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-white transition-all max-w-sm" />
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Current Password</label>
+                    <input type="password" placeholder="••••••••" className="w-full bg-surface-bg border border-border-main rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-card-bg transition-all max-w-sm" />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">New Password</label>
-                    <input type="password" placeholder="••••••••" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-white transition-all max-w-sm" />
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">New Password</label>
+                    <input type="password" placeholder="••••••••" className="w-full bg-surface-bg border border-border-main rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-card-bg transition-all max-w-sm" />
                   </div>
                 </div>
                 <div className="mt-6">
@@ -125,12 +125,12 @@ const AdminProfile = () => {
                     { ip: '192.168.1.1', device: 'Chrome on Mac OS', time: 'Just now', loc: 'San Francisco, US' },
                     { ip: '192.168.1.1', device: 'Safari on iPhone 13', time: '2 days ago', loc: 'San Francisco, US' },
                   ].map((log, i) => (
-                    <div key={i} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
+                    <div key={i} className="flex justify-between items-center py-3 border-b border-border-main last:border-0">
                       <div>
-                        <p className="font-bold text-sm text-gray-900">{log.device}</p>
-                        <p className="text-xs font-medium text-gray-500 mt-0.5 flex items-center gap-1"><MapPin size={10} /> {log.loc} • {log.ip}</p>
+                        <p className="font-bold text-sm text-text-main">{log.device}</p>
+                        <p className="text-xs font-medium text-text-muted mt-0.5 flex items-center gap-1"><MapPin size={10} /> {log.loc} • {log.ip}</p>
                       </div>
-                      <span className="text-xs font-bold text-gray-400">{log.time}</span>
+                      <span className="text-xs font-bold text-text-muted">{log.time}</span>
                     </div>
                   ))}
                 </div>

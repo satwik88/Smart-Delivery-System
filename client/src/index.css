@@ -7,15 +7,15 @@
   --color-brand-blue: #2F44FF;
   
   /* UI Colors */
-  --color-surface-bg: #F4F5FF;
-  --color-card-bg: #FFFFFF;
+  --color-surface-bg: var(--surface-bg);
+  --color-card-bg: var(--card-bg);
   
   /* Text Colors */
-  --color-text-main: #111827;
-  --color-text-muted: #6B7280;
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
   
   /* Semantic Colors */
-  --color-border-main: #E5E7EB;
+  --color-border-main: var(--border-main);
   --color-success: #22C55E;
   --color-warning: #FACC15;
   --color-danger: #EF4444;
@@ -48,8 +48,24 @@
 }
 
 @layer base {
+  :root {
+    --surface-bg: #F4F5FF;
+    --card-bg: #FFFFFF;
+    --text-main: #111827;
+    --text-muted: #6B7280;
+    --border-main: #E5E7EB;
+  }
+
+  html.dark {
+    --surface-bg: #0B0F19;
+    --card-bg: #111827;
+    --text-main: #F9FAFB;
+    --text-muted: #9CA3AF;
+    --border-main: #1F2937;
+  }
+
   body {
-    @apply bg-surface-bg text-text-main font-sans antialiased selection:bg-brand-blue selection:text-white;
+    @apply bg-surface-bg text-text-main font-sans antialiased selection:bg-brand-blue selection:text-white transition-colors duration-300;
   }
 }
 
@@ -69,5 +85,5 @@
 
 /* Base utility for premium cards */
 .premium-card {
-  @apply bg-card-bg rounded-[2rem] shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)] border border-white hover:-translate-y-1 hover:shadow-[0_12px_32px_-8px_rgba(47,68,255,0.1)] transition-all duration-300 ease-out;
+  @apply bg-card-bg rounded-[2rem] shadow-[0_4px_24px_-8px_rgba(0,0,0,0.05)] border border-border-main hover:-translate-y-1 hover:shadow-[0_12px_32px_-8px_rgba(47,68,255,0.1)] transition-all duration-300 ease-out;
 }

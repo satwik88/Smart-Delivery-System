@@ -11,10 +11,10 @@ import {
 const SectionPlaceholder = ({ title, desc }) => (
   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="premium-card p-8">
     <h3 className="font-bold text-lg mb-2">{title}</h3>
-    <p className="text-gray-500 text-sm mb-6">{desc}</p>
+    <p className="text-text-muted text-sm mb-6">{desc}</p>
     <div className="flex flex-col items-center justify-center py-12 text-gray-300">
       <Settings size={48} className="mb-4 opacity-50 animate-spin-slow" />
-      <p className="font-medium text-gray-400">This settings module is currently under construction.</p>
+      <p className="font-medium text-text-muted">This settings module is currently under construction.</p>
     </div>
   </motion.div>
 );
@@ -25,12 +25,12 @@ const GeneralSettings = () => (
       <h3 className="font-bold text-lg mb-6">General System Preferences</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Platform Name</label>
-          <input type="text" defaultValue="Smart Delivery System" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue" />
+          <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Platform Name</label>
+          <input type="text" defaultValue="Smart Delivery System" className="w-full bg-surface-bg border border-border-main rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue" />
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Timezone</label>
-          <select className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue">
+          <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Timezone</label>
+          <select className="w-full bg-surface-bg border border-border-main rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue">
             <option>UTC (Coordinated Universal Time)</option>
             <option>PST (Pacific Standard Time)</option>
             <option>EST (Eastern Standard Time)</option>
@@ -38,16 +38,16 @@ const GeneralSettings = () => (
           </select>
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Currency</label>
-          <select className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue">
+          <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Currency</label>
+          <select className="w-full bg-surface-bg border border-border-main rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue">
             <option>USD ($)</option>
             <option>EUR (€)</option>
             <option>INR (₹)</option>
           </select>
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Date Format</label>
-          <select className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue">
+          <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Date Format</label>
+          <select className="w-full bg-surface-bg border border-border-main rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue">
             <option>MM/DD/YYYY</option>
             <option>DD/MM/YYYY</option>
             <option>YYYY-MM-DD</option>
@@ -85,8 +85,8 @@ const AdminSettings = () => {
   return (
     <div className="flex flex-col gap-8 max-w-6xl mx-auto w-full pb-12">
       <div>
-        <h1 className="text-3xl font-black text-gray-900">Settings</h1>
-        <p className="text-gray-500 font-medium mt-1">Configure your logistics platform and network parameters.</p>
+        <h1 className="text-3xl font-black text-text-main">Settings</h1>
+        <p className="text-text-muted font-medium mt-1">Configure your logistics platform and network parameters.</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">

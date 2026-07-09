@@ -31,19 +31,19 @@ const OrdersTrackingModule = () => {
     <div className="flex flex-col h-full gap-6 relative z-10 overflow-auto pb-8">
       <div className="glass-panel p-6 shrink-0">
         <h2 className="text-xl font-bold text-slate-100">Orders & Tracking Control</h2>
-        <p className="text-sm text-slate-400">Manage orders and simulate delivery progress for demonstrations.</p>
+        <p className="text-sm text-text-muted">Manage orders and simulate delivery progress for demonstrations.</p>
       </div>
 
       <div className="glass-panel p-6">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr>
-              <th className="p-3 border-b border-slate-700 text-slate-400 font-medium">Tracking Code</th>
-              <th className="p-3 border-b border-slate-700 text-slate-400 font-medium">Customer</th>
-              <th className="p-3 border-b border-slate-700 text-slate-400 font-medium">Route</th>
-              <th className="p-3 border-b border-slate-700 text-slate-400 font-medium">Status</th>
-              <th className="p-3 border-b border-slate-700 text-slate-400 font-medium">Progress</th>
-              <th className="p-3 border-b border-slate-700 text-slate-400 font-medium">Action</th>
+              <th className="p-3 border-b border-slate-700 text-text-muted font-medium">Tracking Code</th>
+              <th className="p-3 border-b border-slate-700 text-text-muted font-medium">Customer</th>
+              <th className="p-3 border-b border-slate-700 text-text-muted font-medium">Route</th>
+              <th className="p-3 border-b border-slate-700 text-text-muted font-medium">Status</th>
+              <th className="p-3 border-b border-slate-700 text-text-muted font-medium">Progress</th>
+              <th className="p-3 border-b border-slate-700 text-text-muted font-medium">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -51,7 +51,7 @@ const OrdersTrackingModule = () => {
               <tr key={o.id} className="hover:bg-slate-800/50">
                 <td className="p-3 border-b border-slate-800 text-neon-blue font-mono text-sm">{o.tracking_code}</td>
                 <td className="p-3 border-b border-slate-800 text-slate-300">{o.customer_name}</td>
-                <td className="p-3 border-b border-slate-800 text-slate-400 text-sm">
+                <td className="p-3 border-b border-slate-800 text-text-muted text-sm">
                   {o.source_name} → {o.dest_name}
                 </td>
                 <td className="p-3 border-b border-slate-800">
@@ -67,7 +67,7 @@ const OrdersTrackingModule = () => {
                   <div className="w-full bg-slate-700 rounded-full h-2.5">
                     <div className="bg-neon-blue h-2.5 rounded-full transition-all" style={{ width: `${o.progress_pct}%` }}></div>
                   </div>
-                  <div className="text-xs text-slate-400 mt-1">{o.progress_pct.toFixed(0)}%</div>
+                  <div className="text-xs text-text-muted mt-1">{o.progress_pct.toFixed(0)}%</div>
                 </td>
                 <td className="p-3 border-b border-slate-800">
                   <button 

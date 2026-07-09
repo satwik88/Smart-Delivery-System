@@ -93,7 +93,7 @@ const NetworkTopography = () => {
       <div className="glass-panel p-6 flex items-center justify-between shrink-0">
         <div>
           <h2 className="text-xl font-bold text-slate-100">Logistics Network</h2>
-          <p className="text-sm text-slate-400">Visualize facilities and optimize the core distribution network.</p>
+          <p className="text-sm text-text-muted">Visualize facilities and optimize the core distribution network.</p>
         </div>
         <div className="flex gap-4">
           <select 
@@ -116,7 +116,7 @@ const NetworkTopography = () => {
 
       <div className="flex gap-6 flex-1 min-h-0">
         <div className="glass-panel flex-1 flex flex-col p-4 relative">
-          <div className="absolute top-4 left-4 z-10 text-xs text-slate-400 font-mono">
+          <div className="absolute top-4 left-4 z-10 text-xs text-text-muted font-mono">
             {mstResult ? `Cost: ${mstResult.result.totalCost} | Time: ${mstResult.metrics.time.toFixed(2)}ms | Comparisons: ${mstResult.metrics.comparisons}` : 'Awaiting Calculation...'}
           </div>
           <div ref={containerRef} className="flex-1 w-full bg-slate-900/50 rounded" />
@@ -130,7 +130,7 @@ const NetworkTopography = () => {
                 <span className="text-neon-blue mr-2">[{i+1}]</span>{step}
               </div>
             )) : (
-              <p className="text-sm text-slate-500 italic">Run an algorithm to see step-by-step execution details.</p>
+              <p className="text-sm text-text-muted italic">Run an algorithm to see step-by-step execution details.</p>
             )}
           </div>
         </div>

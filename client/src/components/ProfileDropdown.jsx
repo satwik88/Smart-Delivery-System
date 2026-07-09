@@ -24,7 +24,7 @@ const ProfileDropdown = () => {
     <div className="relative">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="p-1 bg-gray-50 border border-gray-200 hover:bg-gray-100 rounded-full transition-all hover:scale-105 active:scale-95 flex items-center justify-center"
+        className="p-1 bg-surface-bg border border-border-main hover:bg-gray-100 rounded-full transition-all hover:scale-105 active:scale-95 flex items-center justify-center"
       >
         <div className="w-9 h-9 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue font-bold text-sm">
           SR
@@ -44,15 +44,15 @@ const ProfileDropdown = () => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-14 right-0 w-[240px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 origin-top-right flex flex-col overflow-hidden p-2"
+              className="absolute top-14 right-0 w-[240px] bg-card-bg rounded-2xl shadow-2xl border border-border-main z-50 origin-top-right flex flex-col overflow-hidden p-2"
             >
-              <div className="px-3 py-3 border-b border-gray-100 mb-1 flex items-center gap-3">
+              <div className="px-3 py-3 border-b border-border-main mb-1 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-brand-blue text-white flex items-center justify-center font-bold">
                   SR
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-gray-900 leading-tight">Satwik Raj</p>
-                  <p className="text-xs font-semibold text-gray-500">Administrator</p>
+                  <p className="text-sm font-bold text-text-main leading-tight">Satwik Raj</p>
+                  <p className="text-xs font-semibold text-text-muted">Administrator</p>
                 </div>
               </div>
               
@@ -63,16 +63,16 @@ const ProfileDropdown = () => {
                     <button 
                       key={i} 
                       onClick={() => { navigate(item.path); setIsOpen(false); }}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-50 text-gray-700 transition-colors w-full text-left"
+                      className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-surface-bg text-gray-700 transition-colors w-full text-left"
                     >
-                      <Icon size={16} className="text-gray-400" />
+                      <Icon size={16} className="text-text-muted" />
                       <span className="text-sm font-semibold">{item.label}</span>
                     </button>
                   )
                 })}
               </div>
 
-              <div className="border-t border-gray-100 mt-1 pt-1">
+              <div className="border-t border-border-main mt-1 pt-1">
                 <button 
                   onClick={handleLogout}
                   className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-red-50 text-red-600 transition-colors w-full text-left"

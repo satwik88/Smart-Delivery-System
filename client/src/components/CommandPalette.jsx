@@ -77,31 +77,31 @@ const CommandPalette = ({ isOpen, onClose }) => {
               exit={{ opacity: 0, scale: 0.95, y: -10 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
               onClick={e => e.stopPropagation()}
-              className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[80vh]"
+              className="bg-card-bg w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-border-main flex flex-col max-h-[80vh]"
             >
-              <div className="flex items-center px-4 py-4 border-b border-gray-100 relative">
-                <Search className="text-gray-400 mr-3" size={24} />
+              <div className="flex items-center px-4 py-4 border-b border-border-main relative">
+                <Search className="text-text-muted mr-3" size={24} />
                 <input
                   ref={inputRef}
                   type="text"
                   value={query}
                   onChange={(e) => { setQuery(e.target.value); setSelectedIndex(0); }}
                   placeholder="Search orders, customers, drivers..."
-                  className="flex-1 text-lg font-medium text-gray-900 focus:outline-none placeholder:text-gray-400 bg-transparent"
+                  className="flex-1 text-lg font-medium text-text-main focus:outline-none placeholder:text-text-muted bg-transparent"
                 />
                 <div className="flex gap-1 absolute right-4">
-                  <kbd className="hidden sm:inline-flex items-center justify-center px-2 h-6 text-[10px] font-bold text-gray-400 bg-gray-100 rounded">ESC</kbd>
+                  <kbd className="hidden sm:inline-flex items-center justify-center px-2 h-6 text-[10px] font-bold text-text-muted bg-gray-100 rounded">ESC</kbd>
                 </div>
               </div>
 
               <div className="overflow-y-auto flex-1 p-2">
                 {!query ? (
-                  <div className="p-6 text-center text-gray-400">
+                  <div className="p-6 text-center text-text-muted">
                     <Clock size={32} className="mx-auto mb-3 opacity-50" />
                     <p className="text-sm font-medium">Type to start searching...</p>
                   </div>
                 ) : results.length === 0 ? (
-                  <div className="p-6 text-center text-gray-400">
+                  <div className="p-6 text-center text-text-muted">
                     <p className="text-sm font-medium">No results found for "{query}"</p>
                   </div>
                 ) : (
@@ -114,15 +114,15 @@ const CommandPalette = ({ isOpen, onClose }) => {
                           key={result.id}
                           onMouseEnter={() => setSelectedIndex(index)}
                           onClick={() => { navigate(result.link); onClose(); }}
-                          className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-colors ${isSelected ? 'bg-brand-blue/10' : 'hover:bg-gray-50'}`}
+                          className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-colors ${isSelected ? 'bg-brand-blue/10' : 'hover:bg-surface-bg'}`}
                         >
                           <div className="flex items-center gap-4">
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isSelected ? 'bg-brand-blue text-white' : 'bg-gray-100 text-gray-500'}`}>
+                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isSelected ? 'bg-brand-blue text-white' : 'bg-gray-100 text-text-muted'}`}>
                               <Icon size={20} />
                             </div>
                             <div>
-                              <p className={`text-sm font-bold ${isSelected ? 'text-brand-blue' : 'text-gray-900'}`}>{result.title}</p>
-                              <p className="text-xs font-semibold text-gray-500 mt-0.5">{result.type} • {result.subtitle}</p>
+                              <p className={`text-sm font-bold ${isSelected ? 'text-brand-blue' : 'text-text-main'}`}>{result.title}</p>
+                              <p className="text-xs font-semibold text-text-muted mt-0.5">{result.type} • {result.subtitle}</p>
                             </div>
                           </div>
                           {isSelected && <ArrowRight size={16} className="text-brand-blue" />}
@@ -133,9 +133,9 @@ const CommandPalette = ({ isOpen, onClose }) => {
                 )}
               </div>
 
-              <div className="bg-gray-50 px-4 py-3 border-t border-gray-100 flex items-center gap-4 text-xs font-semibold text-gray-400">
-                <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 bg-white border border-gray-200 rounded">↑</kbd> <kbd className="px-1.5 py-0.5 bg-white border border-gray-200 rounded">↓</kbd> to navigate</span>
-                <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 bg-white border border-gray-200 rounded">↵</kbd> to select</span>
+              <div className="bg-surface-bg px-4 py-3 border-t border-border-main flex items-center gap-4 text-xs font-semibold text-text-muted">
+                <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 bg-card-bg border border-border-main rounded">↑</kbd> <kbd className="px-1.5 py-0.5 bg-card-bg border border-border-main rounded">↓</kbd> to navigate</span>
+                <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 bg-card-bg border border-border-main rounded">↵</kbd> to select</span>
               </div>
             </motion.div>
           </motion.div>

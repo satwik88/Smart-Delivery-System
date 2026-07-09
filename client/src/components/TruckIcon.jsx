@@ -8,7 +8,7 @@ const TruckIcon = ({ x, y }) => {
       style={{ left: x, top: y }}
     >
       <div className="relative">
-        <div className="w-8 h-8 bg-white rounded-full shadow-md border-2 border-neon-blue flex items-center justify-center">
+        <div className="w-8 h-8 bg-card-bg rounded-full shadow-md border-2 border-neon-blue flex items-center justify-center">
           <Truck size={16} className="text-neon-blue" />
         </div>
       </div>
