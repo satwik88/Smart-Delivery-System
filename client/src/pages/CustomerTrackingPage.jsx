@@ -1,9 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Search, Truck, MapPin, Clock, Calendar, Moon, Sun } from 'lucide-react';
-import MapCanvas from '../components/MapCanvas';
-import StatusTimeline from '../components/StatusTimeline';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, MapPin, Clock, Truck, User, Package, CheckCircle2, ChevronLeft } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import L from 'leaflet';
+
+// Leaflet Setup
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
+
+const warehouseIcon = new L.DivIcon({
+  html: '<div class="w-8 h-8 bg-gray-900 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white font-bold text-xs">W</div>',
+  className: 'bg-transparent'
+});
+
+const truckIcon = new L.DivIcon({
+  html: '<div class="w-6 h-6 bg-brand-blue rounded-full border-2 border-white shadow-md animate-pulse"></div>',
+  className: 'bg-transparent'
+});
 
 const CustomerTrackingPage = () => {
   const [trackingCode, setTrackingCode] = useState('');
@@ -11,37 +30,15 @@ const CustomerTrackingPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
-  // Data for the map background
+  // Real DB Data
   const [warehouses, setWarehouses] = useState([]);
-  const [roads, setRoads] = useState([]);
-  
-  // Theme toggle (Native Light)
-  const [theme, setTheme] = useState(localStorage.getItem('slrros_theme') || 'light');
 
   useEffect(() => {
-    // Remove the invert hack for this page
-    document.body.classList.remove('theme-inverted');
-    
-    // Use proper Tailwind dark mode
-    if (theme === 'dark') document.body.classList.add('dark');
-    else document.body.classList.remove('dark');
-    
-    localStorage.setItem('slrros_theme', theme);
-  }, [theme]);
-
-  useEffect(() => {
-    // Fetch initial network data for the map
     const fetchNetwork = async () => {
       try {
-        const [wRes, rRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/warehouses`),
-          axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/roads`)
-        ]);
+        const wRes = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/warehouses`);
         setWarehouses(wRes.data);
-        setRoads(rRes.data);
-      } catch (err) {
-        console.error("Failed to load network data", err);
-      }
+      } catch (err) {}
     };
     fetchNetwork();
   }, []);
@@ -67,140 +64,182 @@ const CustomerTrackingPage = () => {
     }
   };
 
-  // Polling for live updates
   useEffect(() => {
     let interval;
     if (order && order.status !== 'delivered') {
-      interval = setInterval(() => {
-        fetchTracking(order.orderId ? trackingCode : '');
-      }, 3000);
+      interval = setInterval(() => fetchTracking(order.orderId ? trackingCode : ''), 4000);
     }
     return () => clearInterval(interval);
   }, [order?.status, trackingCode]);
 
-  // Derived stats
-  const distanceLeft = order ? (order.totalDistance * (1 - order.progressPct / 100)).toFixed(1) : 0;
-  // Simple ETA: 1 min per km + 10 min base padding
-  const etaMinutes = order ? Math.round(distanceLeft * 1 + 10) : 0;
+  const getStatusColor = (status) => {
+    if (status === 'delivered') return 'text-green-500 bg-green-50';
+    if (status === 'in_transit' || status === 'dispatched') return 'text-brand-blue bg-blue-50';
+    return 'text-gray-500 bg-gray-100';
+  };
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans flex flex-col items-center pb-12 relative transition-colors">
+    <div className="min-h-screen bg-[#F4F5FF] text-gray-900 font-sans flex flex-col selection:bg-brand-blue selection:text-white relative">
       
-      {/* Theme Toggle */}
-      <div className="absolute top-4 right-6 z-50">
-        <button 
-          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} 
-          className="p-2.5 text-slate-500 dark:text-slate-400 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700 hover:text-neon-blue dark:hover:text-neon-blue transition-colors rounded-full shadow-sm hover:shadow-md"
-          title="Toggle Theme"
-        >
-          {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-        </button>
+      {/* Background Blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-blue/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 -left-20 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl"></div>
       </div>
-      {/* 1. HERO SECTION */}
-      <section className="w-full bg-blue-50 dark:bg-slate-800/50 border-b border-blue-100 dark:border-slate-800 py-16 px-4 flex flex-col items-center text-center shadow-sm relative overflow-hidden transition-colors">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-100/50 dark:from-neon-blue/10 to-transparent pointer-events-none"></div>
+
+      <nav className="relative z-10 p-6 flex justify-between items-center max-w-7xl mx-auto w-full">
+        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <ChevronLeft size={20} className="text-gray-400" />
+          <span className="font-bold text-gray-500">Back to Home</span>
+        </Link>
+        <Link to="/admin" className="text-sm font-bold text-brand-blue hover:underline">Admin Login</Link>
+      </nav>
+
+      <main className="flex-1 relative z-10 w-full max-w-5xl mx-auto px-6 py-12 flex flex-col gap-12">
         
-        <div className="relative z-10">
-          <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-blue-100 dark:border-slate-700 flex items-center justify-center mx-auto mb-6 text-neon-blue transition-colors">
-            <Truck size={32} strokeWidth={1.5} />
+        {/* Search Hero */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} 
+          className="text-center max-w-2xl mx-auto w-full"
+        >
+          <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-6 text-brand-blue border border-gray-100">
+            <Package size={32} />
           </div>
-          <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-2">Track your delivery</h1>
-          <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto">Real-time location, status, and ETA for your package.</p>
+          <h1 className="text-4xl font-black mb-4">Track your package</h1>
+          <p className="text-gray-500 font-medium mb-8">Enter your tracking code to get live ETA and driver details.</p>
           
-          <form onSubmit={handleSearch} className="w-full max-w-[480px] mx-auto flex flex-col sm:flex-row gap-3">
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
               <input 
                 type="text" 
                 value={trackingCode}
                 onChange={(e) => setTrackingCode(e.target.value)}
-                placeholder="Enter Tracking Code..."
-                className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-12 pr-4 py-3.5 text-slate-800 dark:text-slate-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-neon-blue/50 focus:border-neon-blue transition-all"
+                placeholder="e.g. TRK-89231..."
+                className="w-full bg-white/60 backdrop-blur-md border border-white rounded-2xl pl-12 pr-4 py-4 text-gray-900 shadow-xl shadow-brand-blue/5 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:bg-white transition-all text-lg font-medium"
               />
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={20} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={24} />
             </div>
             <button 
               type="submit" 
-              className="bg-neon-blue hover:bg-neon-blue-dark text-white px-8 py-3.5 rounded-xl font-semibold shadow-md shadow-blue-500/20 transition-colors whitespace-nowrap"
+              className="bg-brand-blue hover:bg-brand-dark text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-brand-blue/20 transition-all hover:-translate-y-0.5 whitespace-nowrap text-lg"
             >
               {loading ? 'Tracking...' : 'Track'}
             </button>
           </form>
-          {error && <p className="text-red-500 font-medium mt-4 bg-red-50 py-2 px-4 rounded-lg inline-block border border-red-100">{error}</p>}
-        </div>
-      </section>
+          {error && <p className="text-red-500 font-medium mt-4 bg-red-50 py-2 px-4 rounded-xl border border-red-100 inline-block">{error}</p>}
+        </motion.div>
 
-      <main className="w-full max-w-5xl px-4 mt-8 flex flex-col gap-8">
-        
-        {/* 2. MAP + STATS ROW */}
-        <section className="flex flex-col lg:flex-row gap-6">
-          
-          {/* MAP AREA */}
-          <div className="flex-1 bg-white dark:bg-slate-800 p-2 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 h-[350px] transition-colors">
-            <MapCanvas 
-              warehouses={warehouses}
-              roads={roads}
-              route={order ? order.route : null}
-              progressPct={order ? order.progressPct : 0}
-              sourceId={order?.source?.id || null}
-              destId={order?.destination?.id || null}
-            />
-          </div>
+        {/* Tracking Results Area */}
+        <AnimatePresence>
+          {order && (
+            <motion.div 
+              initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
+              className="flex flex-col lg:flex-row gap-8"
+            >
+              
+              {/* Left Col: Details & Map */}
+              <div className="flex-1 flex flex-col gap-6">
+                
+                {/* Live Map Glass Card */}
+                <div className="bg-white/70 backdrop-blur-xl p-3 rounded-3xl shadow-xl shadow-brand-blue/5 border border-white h-[400px] overflow-hidden">
+                  <MapContainer center={[28.6, 77.2]} zoom={10} style={{ height: '100%', width: '100%', borderRadius: '1.25rem' }} zoomControl={false}>
+                    <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+                    {order.source?.lat && <Marker position={[order.source.lat, order.source.lng]} icon={warehouseIcon}><Popup>Origin: {order.source.name}</Popup></Marker>}
+                    {order.destination?.lat && <Marker position={[order.destination.lat, order.destination.lng]} icon={warehouseIcon}><Popup>Destination: {order.destination.name}</Popup></Marker>}
+                    {/* Simulated driver position between source and dest */}
+                    {order.source?.lat && order.destination?.lat && (
+                      <>
+                        <Polyline positions={[[order.source.lat, order.source.lng], [order.destination.lat, order.destination.lng]]} color="#2F44FF" weight={4} dashArray="5, 10" />
+                        <Marker position={[
+                          order.source.lat + (order.destination.lat - order.source.lat) * (order.progressPct / 100),
+                          order.source.lng + (order.destination.lng - order.source.lng) * (order.progressPct / 100)
+                        ]} icon={truckIcon}>
+                          <Popup>Package Location</Popup>
+                        </Marker>
+                      </>
+                    )}
+                  </MapContainer>
+                </div>
 
-          {/* STATS AREA */}
-          <div className="w-full lg:w-[240px] flex flex-col gap-4">
-            <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex items-start gap-4 h-[106px] transition-colors">
-              <div className="p-2.5 bg-blue-50 dark:bg-slate-700 rounded-xl text-neon-blue">
-                <MapPin size={20} />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Distance Left</p>
-                <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-                  {order ? distanceLeft : '--'} <span className="text-sm font-medium text-slate-500 dark:text-slate-400">km</span>
-                </p>
-              </div>
-            </div>
+                {/* Driver & Vehicle Details */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-1 bg-white/70 backdrop-blur-xl p-6 rounded-3xl shadow-lg shadow-gray-200/40 border border-white flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                      <User size={24} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Your Driver</p>
+                      <p className="font-bold text-gray-900">{order.driverName || "Assigning..."}</p>
+                    </div>
+                  </div>
+                  <div className="flex-1 bg-white/70 backdrop-blur-xl p-6 rounded-3xl shadow-lg shadow-gray-200/40 border border-white flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                      <Truck size={24} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Vehicle</p>
+                      <p className="font-bold text-gray-900">{order.vehicleName || "Unknown"}</p>
+                    </div>
+                  </div>
+                </div>
 
-            <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex items-start gap-4 h-[106px] transition-colors">
-              <div className="p-2.5 bg-green-50 dark:bg-slate-700 rounded-xl text-accent-green">
-                <Clock size={20} />
               </div>
-              <div>
-                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Est. Arrival</p>
-                <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">
-                  {order ? etaMinutes : '--'} <span className="text-sm font-medium text-slate-500 dark:text-slate-400">min</span>
-                </p>
-              </div>
-            </div>
 
-            <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex items-start gap-4 h-[106px] transition-colors">
-              <div className="p-2.5 bg-purple-50 dark:bg-slate-700 rounded-xl text-purple-500">
-                <Truck size={20} />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Vehicle</p>
-                <p className="text-lg font-bold text-slate-800 dark:text-slate-100 leading-tight">
-                  {order ? order.vehicleName || 'Standard Truck' : 'Unknown'}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+              {/* Right Col: Timeline & Status */}
+              <div className="w-full lg:w-[380px] flex flex-col gap-6">
+                
+                {/* Main Status Card */}
+                <div className="bg-white/70 backdrop-blur-xl p-8 rounded-3xl shadow-xl shadow-brand-blue/5 border border-white">
+                  <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-6 ${getStatusColor(order.status)}`}>
+                    {order.status.replace('_', ' ')}
+                  </div>
+                  
+                  <div className="mb-8">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Estimated Delivery</p>
+                    <p className="text-3xl font-black text-gray-900">{order.status === 'delivered' ? 'Delivered' : `~${Math.max(10, Math.round(order.totalDistance))} mins`}</p>
+                  </div>
 
-        {/* 3. STATUS TIMELINE */}
-        <section className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 transition-colors">
-          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-8">Order Status</h3>
-          <StatusTimeline currentStatus={order ? order.status : ''} />
-        </section>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                      <span className="text-sm font-semibold text-gray-500 flex items-center gap-2"><MapPin size={16}/> From</span>
+                      <span className="text-sm font-bold">{order.source?.name || "Warehouse"}</span>
+                    </div>
+                    <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                      <span className="text-sm font-semibold text-gray-500 flex items-center gap-2"><MapPin size={16}/> To</span>
+                      <span className="text-sm font-bold">{order.destination?.name || "Customer"}</span>
+                    </div>
+                  </div>
+                </div>
 
+                {/* Timeline Card */}
+                <div className="bg-white/70 backdrop-blur-xl p-8 rounded-3xl shadow-xl shadow-brand-blue/5 border border-white flex-1">
+                  <h3 className="font-bold text-lg mb-6">Order Timeline</h3>
+                  <div className="relative pl-6 border-l-2 border-gray-100 space-y-8">
+                    {order.taskSequence?.map((task, idx) => {
+                      const isCompleted = idx < order.currentTaskIndex;
+                      const isCurrent = idx === order.currentTaskIndex;
+                      
+                      return (
+                        <div key={idx} className="relative">
+                          <div className={`absolute -left-[35px] w-6 h-6 rounded-full flex items-center justify-center border-4 border-white ${isCompleted ? 'bg-green-500' : isCurrent ? 'bg-brand-blue animate-pulse' : 'bg-gray-200'}`}>
+                            {isCompleted && <CheckCircle2 size={12} className="text-white" />}
+                          </div>
+                          <div>
+                            <p className={`font-bold text-sm ${isCurrent ? 'text-brand-blue' : isCompleted ? 'text-gray-900' : 'text-gray-400'}`}>{task}</p>
+                            {isCurrent && <p className="text-xs font-semibold text-gray-500 mt-1">In progress...</p>}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
+              </div>
+
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
-
-      {/* 4. FOOTER */}
-      <footer className="mt-16">
-        <Link to="/admin" className="text-sm font-medium text-slate-400 hover:text-neon-blue transition-colors">
-          Admin Login
-        </Link>
-      </footer>
-      
     </div>
   );
 };

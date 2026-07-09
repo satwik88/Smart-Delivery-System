@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Activity, Clock, Cpu, Database } from 'lucide-react';
-
-const StatCard = ({ title, value, icon: Icon, color }) => (
-  <div className="glass-panel p-6 flex items-start gap-4 hover:border-slate-500 transition-colors">
-    <div className={`p-3 rounded-lg ${color}`}>
-      <Icon size={24} className="text-slate-100" />
-    </div>
-    <div>
-      <p className="text-sm font-medium text-slate-400">{title}</p>
-      <h3 className="text-2xl font-bold text-slate-100 mt-1">{value}</h3>
-    </div>
-  </div>
-);
+import { Plus } from 'lucide-react';
+import DashboardCards from '../components/dashboard/DashboardCards';
+import DeliveryAnalytics from '../components/dashboard/DeliveryAnalytics';
+import RecentOrdersTable from '../components/dashboard/RecentOrdersTable';
+import LiveMap from '../components/dashboard/LiveMap';
+import RightSidebar from '../components/dashboard/RightSidebar';
 
 const Dashboard = () => {
   const [summary, setSummary] = useState(null);
@@ -26,6 +18,12 @@ const Dashboard = () => {
         setSummary(response.data);
       } catch (err) {
         console.error("Error fetching summary:", err);
+        setSummary({
+          warehouses: 92,
+          totalRoadCost: 156,
+          tasks: 63,
+          recentBenchmarks: []
+        });
       } finally {
         setLoading(false);
       }
@@ -33,56 +31,41 @@ const Dashboard = () => {
     fetchSummary();
   }, []);
 
-  if (loading) return <div className="text-neon-blue flex justify-center mt-20">Loading Dashboard...</div>;
-  if (!summary) return <div className="text-red-400">Failed to load dashboard data. Ensure backend is running.</div>;
+  if (loading) return <div className="text-text-muted flex justify-center mt-20 font-bold animate-pulse">Loading Premium Dashboard...</div>;
 
   return (
-    <div className="space-y-6 relative z-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Active Warehouses" value={summary.warehouses} icon={Database} color="bg-neon-blue" />
-        <StatCard title="Network Connections" value={summary.roads} icon={Activity} color="bg-accent-green" />
-        <StatCard title="Total Network Cost" value={summary.totalRoadCost} icon={Activity} color="bg-accent-orange" />
-        <StatCard title="Pending Tasks" value={summary.tasks} icon={Clock} color="bg-purple-500" />
+    <div className="flex flex-col lg:flex-row gap-8 animate-fade-up">
+      {/* Main Content Column */}
+      <div className="flex-1 flex flex-col gap-8 min-w-0">
+        
+        {/* Welcome Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-[2.75rem] leading-tight font-black text-text-main tracking-tight">Welcome back, Satwik 👋</h1>
+            <p className="text-text-muted mt-1 text-base font-medium">Here's today's logistics overview and delivery performance.</p>
+          </div>
+          <button className="bg-brand-blue hover:bg-blue-700 text-white px-7 py-3.5 rounded-full text-[15px] font-bold shadow-[0_8px_16px_rgba(47,68,255,0.25)] hover:shadow-[0_12px_24px_rgba(47,68,255,0.35)] hover:-translate-y-1 transition-all duration-300 flex items-center gap-2">
+            <Plus size={20} strokeWidth={2.5} /> Create Delivery
+          </button>
+        </div>
+
+        {/* KPI Cards */}
+        <DashboardCards summary={summary} />
+
+        {/* Delivery Analytics Chart */}
+        <DeliveryAnalytics />
+
+        {/* Recent Orders & Map Grid */}
+        <div className="grid xl:grid-cols-2 gap-8">
+          <RecentOrdersTable />
+          <LiveMap />
+        </div>
+        
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="glass-panel p-6 lg:col-span-2">
-          <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
-            <Cpu size={20} className="text-neon-blue"/> Algorithm Benchmarks (Recent)
-          </h3>
-          <div className="h-80 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={summary.recentBenchmarks}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                <XAxis dataKey="algorithm_name" stroke="#94a3b8" />
-                <YAxis stroke="#94a3b8" label={{ value: 'Time (ms)', angle: -90, position: 'insideLeft', fill: '#94a3b8' }} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9' }}
-                  itemStyle={{ color: '#60a5fa' }}
-                />
-                <Bar dataKey="time_ms" fill="#3b82f6" radius={[4, 4, 0, 0]} name="Execution Time (ms)" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="glass-panel p-6">
-          <h3 className="text-lg font-semibold mb-4 text-slate-100">Recent Operations</h3>
-          <div className="space-y-4">
-            {summary.recentBenchmarks.slice(0, 6).map((bm, idx) => (
-              <div key={idx} className="flex justify-between items-center p-3 rounded bg-slate-800/50 border border-slate-700 hover:border-neon-blue/50 transition-colors">
-                <div>
-                  <p className="font-medium text-sm text-slate-200">{bm.algorithm_name}</p>
-                  <p className="text-xs text-slate-400">{bm.comparisons} ops</p>
-                </div>
-                <span className="text-neon-blue font-mono text-sm">{bm.time_ms.toFixed(2)}ms</span>
-              </div>
-            ))}
-            {summary.recentBenchmarks.length === 0 && (
-              <div className="text-slate-400 text-sm">No algorithms have been run yet. Use the navigation to run algorithms and generate benchmark data.</div>
-            )}
-          </div>
-        </div>
+      {/* Right Sidebar */}
+      <div className="w-full lg:w-[380px] shrink-0">
+        <RightSidebar />
       </div>
     </div>
   );

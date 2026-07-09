@@ -1,89 +1,115 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Network, Map, Package, Database, ArrowLeft, Moon, Sun, MapPin, Truck } from 'lucide-react';
+import { 
+  Package, 
+  LayoutDashboard, 
+  Search, 
+  Bell, 
+  Settings, 
+  Users, 
+  Car, 
+  BarChart3,
+  User
+} from 'lucide-react';
+import clsx from 'clsx';
+import CommandPalette from './CommandPalette';
+import NotificationDropdown from './NotificationDropdown';
+import ProfileDropdown from './ProfileDropdown';
+import SystemStatus from './SystemStatus';
+import QuickActions from './QuickActions';
 
 const Layout = () => {
   const location = useLocation();
-
-  // Theme toggle (Native Dark)
-  const [theme, setTheme] = useState(localStorage.getItem('slrros_theme') || 'light');
-
-  useEffect(() => {
-    // Admin is natively dark. If preference is 'light', we add 'theme-inverted' to make it light.
-    if (theme === 'light') document.body.classList.add('theme-inverted');
-    else document.body.classList.remove('theme-inverted');
-    localStorage.setItem('slrros_theme', theme);
-  }, [theme]);
+  const [isCommandOpen, setIsCommandOpen] = React.useState(false);
+  const [isStatusOpen, setIsStatusOpen] = React.useState(false);
 
   const navItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/admin/orders', label: 'Live Tracking', icon: MapPin },
-    { path: '/admin/routing', label: 'Active Routes', icon: Map },
-    { path: '/admin/network', label: 'Logistics Network', icon: Network },
-    { path: '/admin/resources', label: 'Fleet Management', icon: Truck },
-    { path: '/admin/sorting', label: 'Order Analytics', icon: Database },
+    { path: '/admin/orders', label: 'Orders', icon: Package },
+    { path: '/admin/drivers', label: 'Drivers', icon: Car },
+    { path: '/admin/customers', label: 'Customers', icon: Users },
+    { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+    { path: '/admin/settings', label: 'Settings', icon: Settings },
   ];
 
   return (
-    <div className="min-h-screen flex bg-slate-900 text-slate-100 font-sans">
-      {/* Sidebar */}
-      <aside className="w-64 bg-slate-800 border-r border-slate-700 flex flex-col">
-        <div className="p-6">
-          <h1 className="text-2xl font-bold text-neon-blue">TRACK</h1>
-          <p className="text-xs text-slate-400 mt-1">Global Logistics Platform</p>
+    <div className="min-h-screen bg-surface-bg flex flex-col font-sans text-text-main">
+      {/* Top Navigation */}
+      <header className="flex items-center justify-between px-8 py-5 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)] shrink-0 z-20 relative">
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <div className="bg-brand-blue p-2.5 rounded-2xl text-white shadow-lg shadow-brand-blue/30">
+            <Package size={24} strokeWidth={2.5} />
+          </div>
+          <div className="leading-tight flex flex-col justify-center">
+            <span className="font-black text-brand-blue text-xl tracking-tight leading-none">TRACK</span>
+            <span className="font-bold text-text-muted text-xs uppercase tracking-widest mt-0.5">Logistics</span>
+          </div>
         </div>
         
-        <nav className="flex-1 px-4 space-y-2">
+        {/* Nav Links */}
+        <nav className="flex items-center gap-1.5">
           {navItems.map((item) => {
+            // Check active based on base path or exact match
+            const isActive = location.pathname.includes(item.path);
             const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+            
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                className={clsx(
+                  "flex items-center gap-2.5 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300",
                   isActive 
-                    ? 'bg-neon-blue/20 text-neon-blue' 
-                    : 'text-slate-300 hover:bg-slate-700/50 hover:text-slate-100'
-                }`}
+                    ? "bg-brand-blue text-white shadow-md shadow-brand-blue/20" 
+                    : "text-text-muted hover:text-text-main hover:bg-gray-100/80"
+                )}
               >
-                <Icon size={20} />
-                <span className="font-medium">{item.label}</span>
+                <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+                {item.label}
               </Link>
             );
           })}
         </nav>
         
-        <div className="p-4 border-t border-slate-700 space-y-4">
-          <Link to="/" className="flex items-center justify-center gap-2 text-sm text-slate-400 hover:text-neon-blue transition-colors w-full bg-slate-800/50 hover:bg-slate-700/50 py-2 rounded-lg border border-slate-700/50">
-            <ArrowLeft size={16} />
-            Back to Tracking
-          </Link>
-          <div className="text-xs text-slate-500 text-center">
-            TRACK Logistics <br/> v2.0
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden">
-        <header className="h-16 bg-slate-800/50 border-b border-slate-700 backdrop-blur-sm flex justify-between items-center px-8 shrink-0">
-          <h2 className="text-xl font-semibold text-slate-100">
-            {navItems.find(i => i.path === location.pathname)?.label || 'TRACK Dashboard'}
-          </h2>
+        {/* Action Icons */}
+        <div className="flex items-center gap-4">
           <button 
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} 
-            className="p-2 text-slate-400 hover:text-neon-blue transition-colors rounded-full hover:bg-slate-700/50"
-            title="Toggle Theme"
+            onClick={() => setIsCommandOpen(true)}
+            className="hidden md:flex items-center gap-3 px-4 py-2 bg-gray-50 border border-gray-200 hover:bg-gray-100 rounded-full text-gray-500 transition-colors mr-2"
           >
-            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+            <Search size={16} />
+            <span className="text-sm font-medium">Search...</span>
+            <kbd className="px-1.5 py-0.5 bg-white border border-gray-200 rounded text-[10px] font-bold shadow-sm">CTRL K</kbd>
           </button>
-        </header>
-        
-        <div className="flex-1 overflow-auto p-8 relative">
-          <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neon-blue to-transparent" />
-          <Outlet />
+          
+          <button 
+            className="md:hidden p-3 bg-gray-50 border border-border-main hover:bg-gray-100 rounded-full text-text-muted hover:text-text-main transition-colors hover:scale-105 transform active:scale-95 duration-200"
+            onClick={() => setIsCommandOpen(true)}
+          >
+            <Search size={20} strokeWidth={2} />
+          </button>
+
+          <button 
+            onClick={() => setIsStatusOpen(true)}
+            className="p-3 bg-green-50 border border-green-200 hover:bg-green-100 rounded-full text-green-600 transition-colors hover:scale-105 transform active:scale-95 duration-200"
+            title="System Status"
+          >
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+          </button>
+
+          <NotificationDropdown />
+          <QuickActions />
+          <ProfileDropdown />
+          <SystemStatus isOpen={isStatusOpen} onClose={() => setIsStatusOpen(false)} />
         </div>
+      </header>
+
+      <CommandPalette isOpen={isCommandOpen} onClose={() => setIsCommandOpen(false)} />
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-auto p-8 relative">
+        <Outlet />
       </main>
     </div>
   );

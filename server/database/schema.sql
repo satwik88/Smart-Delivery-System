@@ -64,7 +64,16 @@ CREATE TABLE IF NOT EXISTS orders (
   id INT AUTO_INCREMENT PRIMARY KEY,
   customer_name VARCHAR(100) NOT NULL,
   budget FLOAT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  tracking_code VARCHAR(20) UNIQUE,
+  source_warehouse_id INT,
+  dest_warehouse_id INT,
+  vehicle_id INT,
+  status ENUM('placed','verified','packed','dispatched','in_transit','delivered') DEFAULT 'placed',
+  progress_pct FLOAT DEFAULT 0,
+  FOREIGN KEY (source_warehouse_id) REFERENCES warehouses(id),
+  FOREIGN KEY (dest_warehouse_id) REFERENCES warehouses(id),
+  FOREIGN KEY (vehicle_id) REFERENCES vehicles(id)
 );
 
 CREATE TABLE IF NOT EXISTS order_items (
