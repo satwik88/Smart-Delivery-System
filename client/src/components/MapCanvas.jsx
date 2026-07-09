@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Truck } from 'lucide-react';
 
 const MapCanvas = ({ warehouses, roads, route, progressPct, sourceId, destId }) => {
@@ -21,7 +21,7 @@ const MapCanvas = ({ warehouses, roads, route, progressPct, sourceId, destId }) 
   };
 
   // Calculate truck position
-  const truckPos = useMemo(() => {
+  const getTruckPos = () => {
     if (!route || route.length < 2) return null;
     
     const segDistances = [];
@@ -44,7 +44,9 @@ const MapCanvas = ({ warehouses, roads, route, progressPct, sourceId, destId }) 
       target -= segDistances[i];
     }
     return { x: route[route.length-1].pos_x, y: route[route.length-1].pos_y };
-  }, [route, progressPct]);
+  };
+
+  const truckPos = getTruckPos();
 
   return (
     <div className="w-full h-full relative bg-slate-50/50 rounded-xl border border-slate-200 overflow-hidden">

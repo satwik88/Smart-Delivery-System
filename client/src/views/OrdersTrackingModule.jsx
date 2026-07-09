@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Package, Truck, CheckCircle } from 'lucide-react';
+import { Truck, CheckCircle } from 'lucide-react';
 
 const OrdersTrackingModule = () => {
   const [orders, setOrders] = useState([]);
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/admin/orders`);
       setOrders(res.data);
     } catch (err) {
       console.error(err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   const advanceDelivery = async (id) => {
     try {

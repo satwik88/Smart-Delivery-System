@@ -2,8 +2,26 @@ import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ChevronDown } from 'lucide-react';
 
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-slate-900 border border-slate-700 p-3 rounded-xl shadow-xl">
+        <p className="text-slate-300 text-xs font-bold mb-2">{label}</p>
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center gap-2 text-sm">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+            <span className="text-slate-400">{entry.name}:</span>
+            <span className="text-white font-bold">{entry.name === 'revenue' ? '$' : ''}{entry.value}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
 const DeliveryAnalytics = () => {
-  const [timeRange, setTimeRange] = useState('Week');
+  const [timeRange] = useState('Week');
 
   // Dummy analytics data (Mocked for future integration)
   const data = [
@@ -23,24 +41,6 @@ const DeliveryAnalytics = () => {
     { label: 'Cancelled', value: '12' },
     { label: 'Success Rate', value: '98.5%' },
   ];
-
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-gray-900 text-white p-4 rounded-xl shadow-xl border border-gray-700">
-          <p className="font-bold mb-2">{label}</p>
-          {payload.map((entry, index) => (
-            <p key={index} className="text-sm flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }}></span>
-              <span className="text-gray-300 capitalize">{entry.name}:</span> 
-              <span className="font-bold">{entry.name === 'revenue' ? `$${entry.value}` : entry.value}</span>
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="premium-card p-8 flex flex-col gap-8 relative">

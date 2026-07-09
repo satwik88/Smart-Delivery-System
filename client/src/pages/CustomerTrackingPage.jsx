@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, Clock, Truck, User, Package, CheckCircle2, ChevronLeft } from 'lucide-react';
+import { Search, MapPin, Truck, User, Package, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 
@@ -31,14 +31,14 @@ const CustomerTrackingPage = () => {
   const [loading, setLoading] = useState(false);
   
   // Real DB Data
-  const [warehouses, setWarehouses] = useState([]);
-
+  
   useEffect(() => {
     const fetchNetwork = async () => {
       try {
-        const wRes = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/warehouses`);
-        setWarehouses(wRes.data);
-      } catch (err) {}
+        await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/warehouses`);
+      } catch (error) {
+        console.error(error);
+      }
     };
     fetchNetwork();
   }, []);
@@ -49,7 +49,7 @@ const CustomerTrackingPage = () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/track/${code}`);
       setOrder(res.data);
-    } catch (err) {
+    } catch (error) {
       setOrder(null);
       setError('Order not found. Please check your tracking code.');
     } finally {

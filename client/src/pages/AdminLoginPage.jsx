@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Lock } from 'lucide-react';
@@ -20,7 +20,7 @@ const AdminLoginPage = () => {
         sessionStorage.setItem('adminAuth', 'true');
         navigate('/admin/dashboard');
       }
-    } catch (err) {
+    } catch (error) {
       setError(true);
       setTimeout(() => setError(false), 2000); // clear error after shake
     } finally {

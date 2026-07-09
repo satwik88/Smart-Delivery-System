@@ -1,6 +1,4 @@
-import React from 'react';
-import clsx from 'clsx';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, TrendingDown, Package, Clock, Truck, ShieldAlert } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 
 const DashboardCards = ({ summary }) => {

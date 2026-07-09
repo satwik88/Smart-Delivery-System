@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
-import { Package, Activity } from 'lucide-react';
+import { Activity } from 'lucide-react';
 
 const ResourceAllocation = () => {
   const [capacity, setCapacity] = useState('50');

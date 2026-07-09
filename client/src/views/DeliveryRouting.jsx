@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Play, MapPin } from 'lucide-react';
+import { Play } from 'lucide-react';
 
 const DeliveryRouting = () => {
   const [warehouses, setWarehouses] = useState([]);

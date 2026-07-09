@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronRight, Edit2, Box, Navigation, User, Truck, AlertCircle, Zap } from 'lucide-react';
+import { ChevronRight, Navigation, User, Truck, AlertCircle, Zap, MoreHorizontal, Plus, Bell, CheckCircle2 } from 'lucide-react';
 
 const RightSidebar = () => {
   return (

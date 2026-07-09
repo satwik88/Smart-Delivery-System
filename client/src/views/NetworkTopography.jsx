@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Network } from 'vis-network/standalone';
 import { Play } from 'lucide-react';
@@ -13,21 +13,20 @@ const NetworkTopography = () => {
   const networkRef = useRef(null);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [wRes, rRes] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/warehouses`),
+          axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/roads`)
+        ]);
+        setWarehouses(wRes.data);
+        setRoads(rRes.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
     fetchData();
   }, []);
-
-  const fetchData = async () => {
-    try {
-      const [wRes, rRes] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/warehouses`),
-        axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/network/roads`)
-      ]);
-      setWarehouses(wRes.data);
-      setRoads(rRes.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   useEffect(() => {
     if (containerRef.current && warehouses.length > 0) {

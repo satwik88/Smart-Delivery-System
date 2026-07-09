@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Public Pages
@@ -19,8 +18,6 @@ import AdminProfile from './pages/AdminProfile';
 import AdminSettings from './pages/AdminSettings';
 
 // Legacy Admin Pages repurposed
-import NetworkTopography from './views/NetworkTopography'; // Using this for Warehouses
-import DataSorting from './views/DataSorting'; // Using this for Analytics
 
 function App() {
   return (
