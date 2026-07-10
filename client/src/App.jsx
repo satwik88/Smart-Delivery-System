@@ -31,7 +31,6 @@ import AdminCustomers from './pages/AdminCustomers';
 import AdminProfile from './pages/AdminProfile';
 import AdminSettings from './pages/AdminSettings';
 import AdminAnalytics from './pages/AdminAnalytics';
-import FinancialModule from './views/FinancialModule';
 
 // Legacy Admin Pages repurposed
 
