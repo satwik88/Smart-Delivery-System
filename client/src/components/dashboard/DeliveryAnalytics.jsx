@@ -46,7 +46,7 @@ const DeliveryAnalytics = () => {
     <div className="premium-card p-8 flex flex-col gap-8 relative">
       
       {/* Mocked indicator for future DB integration */}
-      <div className="absolute top-4 left-4 bg-gray-100 text-text-muted text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wider">
+      <div className="absolute top-4 left-4 bg-surface-bg border border-border-main text-text-muted text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wider">
         Mocked Data (Pending DB)
       </div>
 
@@ -58,7 +58,7 @@ const DeliveryAnalytics = () => {
         
         {/* Dropdown */}
         <div className="relative group cursor-pointer">
-          <div className="bg-surface-bg border border-border-main rounded-full px-5 py-2 flex items-center gap-2 hover:bg-gray-100 transition-colors">
+          <div className="bg-surface-bg border border-border-main rounded-full px-5 py-2 flex items-center gap-2 hover:opacity-80 transition-opacity">
             <span className="text-sm font-bold text-text-main">{timeRange}</span>
             <ChevronDown size={16} className="text-text-muted group-hover:text-text-main" />
           </div>

@@ -7,15 +7,15 @@
   --color-brand-blue: #2F44FF;
   
   /* UI Colors */
-  --color-surface-bg: var(--surface-bg);
-  --color-card-bg: var(--card-bg);
+  --color-surface-bg: #F4F5FF;
+  --color-card-bg: #FFFFFF;
   
   /* Text Colors */
-  --color-text-main: var(--text-main);
-  --color-text-muted: var(--text-muted);
+  --color-text-main: #000000;
+  --color-text-muted: #000000;
   
   /* Semantic Colors */
-  --color-border-main: var(--border-main);
+  --color-border-main: #E5E7EB;
   --color-success: #22C55E;
   --color-warning: #FACC15;
   --color-danger: #EF4444;
@@ -48,20 +48,12 @@
 }
 
 @layer base {
-  :root {
-    --surface-bg: #F4F5FF;
-    --card-bg: #FFFFFF;
-    --text-main: #111827;
-    --text-muted: #6B7280;
-    --border-main: #E5E7EB;
-  }
-
   html.dark {
-    --surface-bg: #0B0F19;
-    --card-bg: #111827;
-    --text-main: #F9FAFB;
-    --text-muted: #9CA3AF;
-    --border-main: #1F2937;
+    --color-surface-bg: #0B0F19;
+    --color-card-bg: #111827;
+    --color-text-main: #FFFFFF;
+    --color-text-muted: #FFFFFF;
+    --color-border-main: #1F2937;
   }
 
   body {

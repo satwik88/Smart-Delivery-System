@@ -24,9 +24,9 @@ const ProfileDropdown = () => {
     <div className="relative">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="p-1 bg-surface-bg border border-border-main hover:bg-gray-100 rounded-full transition-all hover:scale-105 active:scale-95 flex items-center justify-center"
+        className="w-10 h-10 flex items-center justify-center bg-surface-bg border border-border-main hover:bg-gray-100 rounded-full transition-all hover:scale-105 active:scale-95"
       >
-        <div className="w-9 h-9 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue font-bold text-sm">
+        <div className="w-8 h-8 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue font-bold text-xs">
           SR
         </div>
       </button>

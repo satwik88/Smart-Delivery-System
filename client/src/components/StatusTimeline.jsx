@@ -29,7 +29,7 @@ const StatusTimeline = ({ currentStatus }) => {
         {/* Lines Container (starts at center of first icon and ends at center of last icon) */}
         <div className="absolute left-12 right-12 top-5 -translate-y-1/2 h-1 z-0 rounded-full">
           {/* Background Line */}
-          <div className="absolute inset-0 bg-slate-200 dark:bg-slate-700 w-full h-full rounded-full"></div>
+          <div className="absolute inset-0 bg-surface-bg w-full h-full rounded-full border border-border-main"></div>
           
           {/* Progress Line */}
           <div 
@@ -49,13 +49,13 @@ const StatusTimeline = ({ currentStatus }) => {
               <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm
                 ${isCompleted ? 'bg-accent-green text-white' : ''}
                 ${isCurrent ? 'bg-neon-blue text-white ring-4 ring-neon-blue/20' : ''}
-                ${isFuture ? 'bg-card-bg dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 text-text-muted dark:text-text-muted' : ''}
+                ${isFuture ? 'bg-card-bg border-2 border-border-main text-text-muted' : ''}
               `}>
                 <Icon size={18} strokeWidth={isCompleted || isCurrent ? 3 : 2} />
               </div>
               <div className="mt-3 text-center">
                 <p className={`text-xs font-semibold tracking-wide uppercase ${
-                  isCurrent ? 'text-text-main dark:text-slate-100' : isCompleted ? 'text-slate-700 dark:text-slate-300' : 'text-text-muted dark:text-text-muted'
+                  isCurrent ? 'text-text-main font-bold' : isCompleted ? 'text-text-main opacity-80' : 'text-text-muted'
                 }`}>
                   {step.label}
                 </p>

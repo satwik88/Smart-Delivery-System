@@ -56,7 +56,7 @@ const LiveMap = () => {
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-bold text-text-main">Live Map</h2>
           {/* Note to show some data is mocked */}
-          <span className="text-[10px] bg-gray-100 text-text-muted px-2 py-0.5 rounded-full" title="Driver is simulated. Warehouses are real DB data.">Partial Mock</span>
+          <span className="text-[10px] bg-surface-bg border border-border-main text-text-muted px-2 py-0.5 rounded-full" title="Driver is simulated. Warehouses are real DB data.">Partial Mock</span>
         </div>
         <span className="bg-brand-blue/10 text-brand-blue text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider">Active</span>
       </div>

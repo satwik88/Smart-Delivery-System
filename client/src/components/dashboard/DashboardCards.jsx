@@ -14,7 +14,7 @@ const DashboardCards = ({ summary }) => {
       <div className="premium-card p-6 flex flex-col justify-between h-48 relative overflow-hidden group">
         <div className="flex justify-between items-center relative z-10">
           <span className="text-text-muted font-bold text-sm">Today's Orders</span>
-          <span className="bg-gray-100 text-text-muted text-[11px] px-3 py-1 rounded-full font-bold cursor-pointer hover:bg-gray-200 transition-colors">View Details</span>
+          <span className="bg-surface-bg border border-border-main text-text-muted text-[11px] px-3 py-1 rounded-full font-bold cursor-pointer hover:opacity-80 transition-colors">View Details</span>
         </div>
         <div className="mt-4 flex items-end gap-3 relative z-10">
           <span className="text-[2.75rem] leading-none font-black text-text-main">
@@ -63,13 +63,13 @@ const DashboardCards = ({ summary }) => {
       <div className="premium-card p-6 flex flex-col justify-between h-48 group">
         <div className="flex justify-between items-center">
           <span className="text-text-muted font-bold text-sm">Completed Deliveries</span>
-          <span className="bg-gray-100 text-text-muted text-[11px] px-3 py-1 rounded-full font-bold cursor-pointer hover:bg-gray-200 transition-colors">Success Rate</span>
+          <span className="bg-surface-bg border border-border-main text-text-muted text-[11px] px-3 py-1 rounded-full font-bold cursor-pointer hover:opacity-80 transition-colors">Success Rate</span>
         </div>
         <div className="mt-4 flex items-end gap-3">
           <span className="text-[2.75rem] leading-none font-black text-text-main">
             {summary?.totalRoadCost ? (summary.totalRoadCost * 7) : '1,127'}
           </span>
-          <span className="text-sm font-black text-text-main mb-1.5 bg-gray-100 px-2 py-0.5 rounded-md">
+          <span className="text-sm font-black text-text-main mb-1.5 bg-surface-bg border border-border-main px-2 py-0.5 rounded-md">
             98%
           </span>
         </div>
@@ -77,7 +77,7 @@ const DashboardCards = ({ summary }) => {
             <div className="w-[98%] flex items-center justify-center text-xs font-bold text-brand-blue transition-all duration-1000 ease-out" 
                  style={{ background: 'repeating-linear-gradient(45deg, #F4F5FF, #F4F5FF 6px, #FFFFFF 6px, #FFFFFF 12px)' }}>
             </div>
-            <div className="w-[2%] bg-gray-100"></div>
+            <div className="w-[2%] bg-surface-bg border-l border-border-main"></div>
         </div>
       </div>
       

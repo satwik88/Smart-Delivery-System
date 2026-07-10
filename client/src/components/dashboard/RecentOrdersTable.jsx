@@ -66,13 +66,13 @@ const RecentOrdersTable = () => {
               <th className="py-3 px-2 text-xs font-bold text-text-muted uppercase tracking-wider">Status</th>
               {/* ETA and Payment are mocked because they are not in the db currently */}
               <th className="py-3 px-2 text-xs font-bold text-text-muted uppercase tracking-wider group relative cursor-help">
-                ETA <span className="hidden group-hover:block absolute -top-6 bg-gray-800 text-white text-[10px] px-2 py-1 rounded">Mocked Data</span>
+                ETA <span className="hidden group-hover:block absolute -top-6 bg-card-bg border border-border-main text-text-main text-[10px] px-2 py-1 rounded">Mocked Data</span>
               </th>
             </tr>
           </thead>
           <tbody>
             {orders.map((order, idx) => (
-              <tr key={order.id || idx} className="border-b border-gray-50 hover:bg-surface-bg/50 transition-colors group">
+              <tr key={order.id || idx} className="border-b border-border-main hover:bg-surface-bg/50 transition-colors group">
                 <td className="py-4 px-2 font-bold text-text-main text-sm">#{order.tracking_code || `ORD-${order.id}`}</td>
                 <td className="py-4 px-2 font-semibold text-text-main text-sm">{order.customer_name}</td>
                 <td className="py-4 px-2 text-text-muted text-xs font-medium">
@@ -85,7 +85,7 @@ const RecentOrdersTable = () => {
                   {order.status === 'delivered' ? '-' : '24 mins'}
                 </td>
                 <td className="py-4 px-2 text-right">
-                  <button className="p-1.5 text-text-muted hover:text-text-main rounded-md hover:bg-gray-200 transition-colors opacity-0 group-hover:opacity-100">
+                  <button className="p-1.5 text-text-muted hover:text-text-main rounded-md hover:bg-surface-bg border border-transparent hover:border-border-main transition-all opacity-0 group-hover:opacity-100">
                     <MoreHorizontal size={16} />
                   </button>
                 </td>

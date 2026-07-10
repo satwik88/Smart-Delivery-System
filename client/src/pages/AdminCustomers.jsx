@@ -76,11 +76,11 @@ const AdminCustomers = () => {
                 </td>
                 <td className="py-4 px-6">
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm font-medium flex items-center gap-2 text-gray-600"><Mail size={14}/> {customer.email}</span>
+                    <span className="text-sm font-medium flex items-center gap-2 text-text-muted"><Mail size={14}/> {customer.email}</span>
                   </div>
                 </td>
                 <td className="py-4 px-6">
-                  <span className="text-sm font-medium flex items-center gap-2 text-gray-600"><MapPin size={14}/> {customer.address}</span>
+                  <span className="text-sm font-medium flex items-center gap-2 text-text-muted"><MapPin size={14}/> {customer.address}</span>
                 </td>
                 <td className="py-4 px-6">
                   <span className={`px-3 py-1 text-[11px] font-bold rounded-full border ${getStatusStyle(customer.status)}`}>

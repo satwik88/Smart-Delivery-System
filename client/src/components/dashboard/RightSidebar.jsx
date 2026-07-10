@@ -7,7 +7,7 @@ const RightSidebar = () => {
       
       {/* Pending Tasks */}
       <div className="premium-card p-6 relative">
-        <div className="absolute top-2 left-4 bg-gray-100 text-text-muted text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Mocked</div>
+        <div className="absolute top-2 left-4 bg-surface-bg border border-border-main text-text-muted text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Mocked</div>
         <div className="flex justify-between items-center mb-6 mt-2">
           <h3 className="font-bold text-text-main text-lg">Pending Tasks</h3>
           <span className="bg-brand-blue/10 text-brand-blue text-[11px] px-3 py-1 rounded-full font-bold">4 Tasks</span>
@@ -51,7 +51,7 @@ const RightSidebar = () => {
         <h3 className="font-bold text-text-main text-lg mb-6">Current Delivery</h3>
         
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center text-text-muted">
+          <div className="w-14 h-14 bg-surface-bg border border-border-main rounded-full flex items-center justify-center text-text-muted">
             <User size={24} />
           </div>
           <div>
@@ -85,7 +85,7 @@ const RightSidebar = () => {
 
       {/* Driver Performance */}
       <div className="premium-card p-6 relative">
-        <div className="absolute top-2 left-4 bg-gray-100 text-text-muted text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Mocked</div>
+        <div className="absolute top-2 left-4 bg-surface-bg border border-border-main text-text-muted text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Mocked</div>
         <div className="flex justify-between items-center mb-6 mt-2">
           <h3 className="font-bold text-text-main text-lg">Top Drivers</h3>
         </div>
@@ -95,7 +95,7 @@ const RightSidebar = () => {
               <span className="font-bold text-sm">Aman</span>
               <span className="font-bold text-sm text-brand-blue">98%</span>
             </div>
-            <div className="w-full bg-gray-100 rounded-full h-2 mb-1">
+            <div className="w-full bg-surface-bg border border-border-main rounded-full h-2 mb-1">
               <div className="bg-brand-blue h-2 rounded-full" style={{ width: '98%' }}></div>
             </div>
             <span className="text-[10px] font-bold text-text-muted uppercase">245 Deliveries</span>
@@ -105,7 +105,7 @@ const RightSidebar = () => {
               <span className="font-bold text-sm">Riya</span>
               <span className="font-bold text-sm text-brand-blue">96%</span>
             </div>
-            <div className="w-full bg-gray-100 rounded-full h-2 mb-1">
+            <div className="w-full bg-surface-bg border border-border-main rounded-full h-2 mb-1">
               <div className="bg-brand-blue h-2 rounded-full opacity-80" style={{ width: '96%' }}></div>
             </div>
             <span className="text-[10px] font-bold text-text-muted uppercase">221 Deliveries</span>
@@ -114,7 +114,8 @@ const RightSidebar = () => {
       </div>
 
       {/* AI Insights */}
-      <div className="premium-card p-6 bg-gradient-to-br from-gray-900 to-gray-800 text-white border-transparent">
+      <div className="premium-card p-6 bg-brand-blue border-transparent text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
         <div className="flex items-center gap-2 mb-6">
           <Zap size={18} className="text-warning" />
           <h3 className="font-bold text-lg">AI Insights</h3>
@@ -122,15 +123,15 @@ const RightSidebar = () => {
         <ul className="space-y-4">
           <li className="flex gap-3 items-start">
             <div className="w-1.5 h-1.5 bg-success rounded-full mt-1.5 shrink-0"></div>
-            <p className="text-sm font-medium text-gray-300">Delivery time improved <strong className="text-white">11%</strong> this week.</p>
+            <p className="text-sm font-medium text-blue-100">Delivery time improved <strong className="text-white">11%</strong> this week.</p>
           </li>
           <li className="flex gap-3 items-start">
             <div className="w-1.5 h-1.5 bg-warning rounded-full mt-1.5 shrink-0"></div>
-            <p className="text-sm font-medium text-gray-300">Heavy traffic expected at <strong className="text-white">6 PM</strong>.</p>
+            <p className="text-sm font-medium text-blue-100">Heavy traffic expected at <strong className="text-white">6 PM</strong>.</p>
           </li>
           <li className="flex gap-3 items-start">
             <div className="w-1.5 h-1.5 bg-brand-blue rounded-full mt-1.5 shrink-0"></div>
-            <p className="text-sm font-medium text-gray-300"><strong className="text-white">Deploy 4 more riders</strong> in Sector 62.</p>
+            <p className="text-sm font-medium text-blue-100"><strong className="text-white">Deploy 4 more riders</strong> in Sector 62.</p>
           </li>
         </ul>
       </div>

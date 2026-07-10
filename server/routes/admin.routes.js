@@ -28,6 +28,7 @@ router.get('/orders', async (req, res) => {
         const [rows] = await db.query(query);
         res.json(rows);
     } catch (err) {
+        console.error("DB Error in /orders:", err);
         res.status(500).json({ error: err.message });
     }
 });

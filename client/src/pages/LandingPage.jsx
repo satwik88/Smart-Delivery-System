@@ -1,9 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Truck, Package, MapPin, Zap, ChevronRight, BarChart2 } from 'lucide-react';
+import { Truck, Package, MapPin, Zap, ChevronRight, BarChart2, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 const LandingPage = () => {
+  const { theme, toggleTheme } = useTheme();
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
@@ -18,7 +20,7 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F5FF] text-text-main font-sans selection:bg-brand-blue selection:text-white">
+    <div className="min-h-screen bg-surface-bg text-text-main font-sans selection:bg-brand-blue selection:text-white transition-colors duration-300">
       
       {/* Navigation */}
       <nav className="fixed w-full top-0 z-50 bg-card-bg/80 backdrop-blur-md border-b border-border-main">
@@ -27,13 +29,20 @@ const LandingPage = () => {
             <div className="w-8 h-8 bg-brand-blue rounded-lg flex items-center justify-center text-white font-black">S</div>
             <span className="font-black text-xl tracking-tight">Smart Delivery</span>
           </div>
-          <div className="hidden md:flex items-center gap-8 font-semibold text-sm text-gray-600">
+          <div className="hidden md:flex items-center gap-8 font-semibold text-sm text-text-muted">
             <a href="#features" className="hover:text-brand-blue transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-brand-blue transition-colors">How it works</a>
             <Link to="/track" className="hover:text-brand-blue transition-colors">Track Package</Link>
           </div>
           <div className="flex items-center gap-4">
-            <Link to="/track" className="text-sm font-bold text-gray-600 hover:text-brand-blue transition-colors">Track</Link>
+            <Link to="/track" className="text-sm font-bold text-text-muted hover:text-brand-blue transition-colors">Track</Link>
+            <button
+              onClick={toggleTheme}
+              className="w-10 h-10 flex items-center justify-center bg-surface-bg border border-border-main hover:bg-gray-100 rounded-full text-text-muted hover:text-text-main transition-colors hover:scale-105 transform active:scale-95 duration-200"
+              title="Toggle Theme"
+            >
+              {theme === 'dark' ? <Sun size={18} strokeWidth={2} /> : <Moon size={18} strokeWidth={2} />}
+            </button>
             <Link to="/admin" className="bg-brand-blue text-white px-5 py-2.5 rounded-full text-sm font-bold hover:shadow-lg hover:shadow-brand-blue/30 transition-all hover:-translate-y-0.5">
               Admin Login
             </Link>
@@ -132,7 +141,7 @@ const LandingPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="p-8 rounded-3xl bg-[#F4F5FF] border border-white hover:border-brand-blue/20 hover:shadow-xl transition-all cursor-default"
+                className="p-8 rounded-3xl bg-surface-bg border border-border-main hover:border-brand-blue/20 hover:shadow-xl transition-all cursor-default"
               >
                 <div className="w-12 h-12 bg-card-bg rounded-2xl flex items-center justify-center mb-6 shadow-sm">{f.icon}</div>
                 <h3 className="text-xl font-bold mb-3">{f.title}</h3>
@@ -143,12 +152,44 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* How it Works */}
+      <section id="how-it-works" className="py-24 px-6 border-t border-border-main">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-black mb-4">How it works</h2>
+            <p className="text-text-muted font-medium max-w-2xl mx-auto">From order placement to final delivery, see how our system operates.</p>
+          </div>
+          <div className="grid md:grid-cols-4 gap-8 text-center relative">
+            {[
+              { step: "1", title: "Order Placed", desc: "Customer places order which enters the centralized system." },
+              { step: "2", title: "Smart Sorting", desc: "Warehouse assigns the package to the optimal delivery route." },
+              { step: "3", title: "Driver Dispatched", desc: "Driver picks up package with AI-optimized turn-by-turn directions." },
+              { step: "4", title: "Delivered", desc: "Real-time tracking updates notify the customer of completion." }
+            ].map((s, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className="relative z-10"
+              >
+                <div className="w-16 h-16 bg-brand-blue text-white rounded-2xl flex items-center justify-center mb-6 mx-auto text-2xl font-black shadow-lg shadow-brand-blue/30">{s.step}</div>
+                <h3 className="text-xl font-bold mb-3">{s.title}</h3>
+                <p className="text-text-muted font-medium text-sm">{s.desc}</p>
+                {i < 3 && <div className="hidden md:block absolute top-8 left-[60%] w-[80%] border-t-2 border-dashed border-border-main -z-10"></div>}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="bg-gray-900 text-text-muted py-12 px-6 border-t border-gray-800">
+      <footer className="bg-card-bg text-text-muted py-12 px-6 border-t border-border-main transition-colors duration-300">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-brand-blue rounded flex items-center justify-center text-white font-black text-xs">S</div>
-            <span className="font-bold text-white tracking-tight">Smart Delivery System</span>
+            <span className="font-bold text-text-main tracking-tight">Smart Delivery System</span>
           </div>
           <div className="text-sm">
             &copy; {new Date().getFullYear()} Smart Delivery System. All rights reserved.

@@ -32,9 +32,9 @@ const NotificationDropdown = () => {
     <div className="relative">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="p-3 bg-surface-bg border border-border-main hover:bg-gray-100 rounded-full text-text-muted hover:text-text-main transition-all relative hover:scale-105 active:scale-95"
+        className="w-10 h-10 flex items-center justify-center bg-surface-bg border border-border-main hover:bg-gray-100 rounded-full text-text-muted hover:text-text-main transition-all relative hover:scale-105 active:scale-95"
       >
-        <Bell size={20} />
+        <Bell size={18} />
         {unreadCount > 0 && (
           <span className="absolute top-2 right-2.5 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>
         )}
