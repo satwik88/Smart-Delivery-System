@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
 const AdminGuard = () => {
-  const isAuth = sessionStorage.getItem('adminAuth') === 'true';
+  const isAuth = !!localStorage.getItem('adminToken');
 
   if (!isAuth) {
     return <Navigate to="/admin" replace />;

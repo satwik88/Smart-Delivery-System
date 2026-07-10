@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { Plus } from 'lucide-react';
 import DashboardCards from '../components/dashboard/DashboardCards';
 import DeliveryAnalytics from '../components/dashboard/DeliveryAnalytics';
@@ -8,27 +8,26 @@ import LiveMap from '../components/dashboard/LiveMap';
 import RightSidebar from '../components/dashboard/RightSidebar';
 
 const Dashboard = () => {
-  const [summary, setSummary] = useState(null);
+  const [metrics, setMetrics] = useState(null);
+  const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSummary = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/dashboard/summary`);
-        setSummary(response.data);
+        const [metricsRes, chartRes] = await Promise.all([
+          api.get('/dashboard/metrics'),
+          api.get('/dashboard/chart-data')
+        ]);
+        setMetrics(metricsRes.data);
+        setChartData(chartRes.data);
       } catch (err) {
-        console.error("Error fetching summary:", err);
-        setSummary({
-          warehouses: 92,
-          totalRoadCost: 156,
-          tasks: 63,
-          recentBenchmarks: []
-        });
+        console.error("Error fetching dashboard data:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchSummary();
+    fetchDashboardData();
   }, []);
 
   if (loading) return <div className="text-text-muted flex justify-center mt-20 font-bold animate-pulse">Loading Premium Dashboard...</div>;
@@ -50,10 +49,10 @@ const Dashboard = () => {
         </div>
 
         {/* KPI Cards */}
-        <DashboardCards summary={summary} />
+        <DashboardCards metrics={metrics} />
 
         {/* Delivery Analytics Chart */}
-        <DeliveryAnalytics />
+        <DeliveryAnalytics chartData={chartData} />
 
         {/* Recent Orders & Map Grid */}
         <div className="grid xl:grid-cols-2 gap-8">

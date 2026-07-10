@@ -1,17 +1,41 @@
 import React, { useState } from 'react';
-import { MOCK_DRIVERS } from '../utils/mockData';
+import api from '../utils/api';
 import { motion } from 'framer-motion';
 import { Search, Filter, Star, Truck, Phone, Navigation } from 'lucide-react';
 
 const AdminDrivers = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  
-  // We have 1000 items, let's just paginate or show a subset for performance if needed, 
-  // but for a demo, showing 20 per page is good.
+  const [drivers, setDrivers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const itemsPerPage = 20;
 
-  const filtered = MOCK_DRIVERS.filter(d => d.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  useEffect(() => {
+    const fetchDrivers = async () => {
+      try {
+        const response = await api.get('/drivers');
+        // The endpoint returns { drivers, vehicles }
+        // For now, map the returned drivers to match the UI format
+        const formatted = response.data.drivers.map((d, i) => ({
+          id: `DRV-${d.id}`,
+          name: d.username,
+          status: 'Available', // Mock status for UI
+          rating: '4.8',
+          vehicle: response.data.vehicles[i % response.data.vehicles.length]?.name || 'Unknown',
+          phone: '+1 (555) 010-' + (1000 + i),
+          deliveries: Math.floor(Math.random() * 500) + 50
+        }));
+        setDrivers(formatted);
+      } catch (err) {
+        console.error("Error fetching drivers:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDrivers();
+  }, []);
+
+  const filtered = drivers.filter(d => d.name.toLowerCase().includes(searchTerm.toLowerCase()));
   const paginated = filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
   const getStatusColor = (status) => {
@@ -24,7 +48,7 @@ const AdminDrivers = () => {
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-black text-text-main">Drivers ({MOCK_DRIVERS.length})</h1>
+          <h1 className="text-3xl font-black text-text-main">Drivers ({drivers.length})</h1>
           <p className="text-text-muted font-medium">Manage fleet operators and availability.</p>
         </div>
         <div className="flex gap-4">

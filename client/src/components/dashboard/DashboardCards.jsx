@@ -1,7 +1,7 @@
 import { TrendingUp, TrendingDown, Package, Clock, Truck, ShieldAlert } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 
-const DashboardCards = ({ summary }) => {
+const DashboardCards = ({ metrics }) => {
   // Dummy line data
   const lineData = [ { val: 4 }, { val: 6 }, { val: 5 }, { val: 8 }, { val: 7 }, { val: 10 }, { val: 12 } ];
   // Dummy bar data
@@ -18,9 +18,9 @@ const DashboardCards = ({ summary }) => {
         </div>
         <div className="mt-4 flex items-end gap-3 relative z-10">
           <span className="text-[2.75rem] leading-none font-black text-text-main">
-            {summary?.warehouses ? (summary.warehouses * 14) : '1,284'}
+            {metrics?.totalOrders || 0}
           </span>
-          <span className="text-xs font-bold text-success mb-1.5 flex items-center gap-1 bg-green-50 px-2 py-0.5 rounded-md">
+          <span className="text-xs font-bold text-success mb-1.5 flex items-center gap-1 bg-green-50 px-2 py-0.5 rounded-md dark:bg-green-900/30">
             <TrendingUp size={14} /> 18% <span className="text-text-muted font-semibold ml-1">vs yesterday</span>
           </span>
         </div>
@@ -43,7 +43,7 @@ const DashboardCards = ({ summary }) => {
           <span className="bg-card-bg/10 backdrop-blur-sm text-white text-[11px] px-3 py-1 rounded-full font-bold cursor-pointer hover:bg-card-bg/20 transition-colors">Currently In Transit</span>
         </div>
         <div className="mt-4 flex items-end gap-3 relative z-10">
-          <span className="text-[2.75rem] leading-none font-black">{summary?.tasks || 356}</span>
+          <span className="text-[2.75rem] leading-none font-black">{metrics?.activeDrivers || 0}</span>
         </div>
         
         <div className="absolute bottom-0 left-0 right-0 h-16 px-6 pb-2">
@@ -67,10 +67,10 @@ const DashboardCards = ({ summary }) => {
         </div>
         <div className="mt-4 flex items-end gap-3">
           <span className="text-[2.75rem] leading-none font-black text-text-main">
-            {summary?.totalRoadCost ? (summary.totalRoadCost * 7) : '1,127'}
+            ${metrics?.revenue ? metrics.revenue.toLocaleString() : '0'}
           </span>
           <span className="text-sm font-black text-text-main mb-1.5 bg-surface-bg border border-border-main px-2 py-0.5 rounded-md">
-            98%
+            {metrics?.totalOrders ? Math.round((metrics.deliveredOrders / metrics.totalOrders) * 100) : 0}%
           </span>
         </div>
         <div className="mt-6 flex h-14 rounded-2xl overflow-hidden border border-border-main group-hover:shadow-md transition-shadow">

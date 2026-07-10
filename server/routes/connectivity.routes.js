@@ -1,13 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const prisma = require('../config/prisma');
 const { warshall } = require('../algorithms/warshall');
 
 // Compute reachability (Warshall)
 router.get('/reachability', async (req, res) => {
     try {
-        const [nodes] = await db.query('SELECT id FROM warehouses ORDER BY id');
-        const [edges] = await db.query('SELECT from_id, to_id FROM roads');
+        const companyId = req.user.company_id;
+        const nodes = await prisma.warehouses.findMany({
+            where: { company_id: companyId },
+            select: { id: true },
+            orderBy: { id: 'asc' }
+        });
+        const edges = await prisma.roads.findMany({
+            where: { company_id: companyId },
+            select: { from_id: true, to_id: true }
+        });
         
         const n = nodes.length;
         const nodeIds = nodes.map(n => n.id);
@@ -21,16 +29,24 @@ router.get('/reachability', async (req, res) => {
         edges.forEach(e => {
             const u = nodeIndex[e.from_id];
             const v = nodeIndex[e.to_id];
-            adjMatrix[u][v] = true;
-            adjMatrix[v][u] = true; // Assuming undirected
+            if(u !== undefined && v !== undefined) {
+                adjMatrix[u][v] = true;
+                adjMatrix[v][u] = true; // Assuming undirected
+            }
         });
 
         const result = warshall(adjMatrix, nodeIds);
 
-        await db.query(
-            'INSERT INTO benchmark_results (algorithm_name, dataset_size, comparisons, swaps, time_ms) VALUES (?, ?, ?, ?, ?)',
-            ['warshall', nodes.length, result.metrics.comparisons, result.metrics.swaps, result.metrics.time]
-        );
+        await prisma.benchmark_results.create({
+            data: {
+                company_id: companyId,
+                algorithm_name: 'warshall',
+                dataset_size: nodes.length,
+                comparisons: result.metrics.comparisons,
+                swaps: result.metrics.swaps,
+                time_ms: result.metrics.time
+            }
+        });
 
         res.json(result);
     } catch (err) {

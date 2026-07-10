@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const prisma = require('../config/prisma');
 const { kruskal } = require('../algorithms/kruskal');
 const { prim } = require('../algorithms/prim');
 
 // GET all warehouses
 router.get('/warehouses', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM warehouses');
+        const rows = await prisma.warehouses.findMany({
+            where: { company_id: req.user.company_id }
+        });
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -17,7 +19,9 @@ router.get('/warehouses', async (req, res) => {
 // GET all roads
 router.get('/roads', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM roads');
+        const rows = await prisma.roads.findMany({
+            where: { company_id: req.user.company_id }
+        });
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -27,9 +31,18 @@ router.get('/roads', async (req, res) => {
 // POST to calculate MST
 router.post('/mst', async (req, res) => {
     const { algorithm } = req.body; // 'kruskal' or 'prim'
+    const companyId = req.user.company_id;
     try {
-        const [nodes] = await db.query('SELECT * FROM warehouses');
-        const [edges] = await db.query('SELECT id, from_id as `from`, to_id as `to`, distance as weight FROM roads');
+        const nodes = await prisma.warehouses.findMany({
+            where: { company_id: companyId }
+        });
+        
+        const dbEdges = await prisma.roads.findMany({
+            where: { company_id: companyId },
+            select: { id: true, from_id: true, to_id: true, distance: true }
+        });
+        
+        const edges = dbEdges.map(e => ({ id: e.id, from: e.from_id, to: e.to_id, weight: e.distance }));
         
         let result;
         if (algorithm === 'kruskal') {
@@ -43,10 +56,16 @@ router.post('/mst', async (req, res) => {
         }
 
         // Log benchmark
-        await db.query(
-            'INSERT INTO benchmark_results (algorithm_name, dataset_size, comparisons, swaps, time_ms) VALUES (?, ?, ?, ?, ?)',
-            [algorithm, nodes.length, result.metrics.comparisons, result.metrics.swaps, result.metrics.time]
-        );
+        await prisma.benchmark_results.create({
+            data: {
+                company_id: companyId,
+                algorithm_name: algorithm,
+                dataset_size: nodes.length,
+                comparisons: result.metrics.comparisons,
+                swaps: result.metrics.swaps,
+                time_ms: result.metrics.time
+            }
+        });
 
         res.json(result);
     } catch (err) {

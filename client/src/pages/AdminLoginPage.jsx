@@ -18,9 +18,9 @@ const AdminLoginPage = () => {
     setError(false);
     
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/admin/auth`, { password });
-      if (res.data.success) {
-        sessionStorage.setItem('adminAuth', 'true');
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/login`, { username: 'admin', password });
+      if (res.data.token) {
+        localStorage.setItem('adminToken', res.data.token);
         navigate('/admin/dashboard');
       }
     } catch (error) {

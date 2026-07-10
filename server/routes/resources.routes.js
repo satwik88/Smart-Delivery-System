@@ -1,22 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const prisma = require('../config/prisma');
 const { fractionalKnapsack } = require('../algorithms/fractionalKnapsack');
 
 // Run Fractional Knapsack
 router.post('/allocate', async (req, res) => {
     try {
+        const companyId = req.user.company_id;
         const { resourceCapacity } = req.body;
         if (!resourceCapacity) return res.status(400).json({ error: 'resourceCapacity is required' });
 
-        const [resources] = await db.query('SELECT * FROM resources');
+        const resources = await prisma.resources.findMany({
+            where: { company_id: companyId }
+        });
         
         const result = fractionalKnapsack(resources, parseFloat(resourceCapacity));
 
-        await db.query(
-            'INSERT INTO benchmark_results (algorithm_name, dataset_size, comparisons, swaps, time_ms) VALUES (?, ?, ?, ?, ?)',
-            ['fractionalKnapsack', resources.length, result.metrics.comparisons, result.metrics.swaps, result.metrics.time]
-        );
+        await prisma.benchmark_results.create({
+            data: {
+                company_id: companyId,
+                algorithm_name: 'fractionalKnapsack',
+                dataset_size: resources.length,
+                comparisons: result.metrics.comparisons,
+                swaps: result.metrics.swaps,
+                time_ms: result.metrics.time
+            }
+        });
 
         res.json(result);
     } catch (err) {

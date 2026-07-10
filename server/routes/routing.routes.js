@@ -1,22 +1,36 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const prisma = require('../config/prisma');
 const { dijkstra } = require('../algorithms/dijkstra');
 const { floydWarshall } = require('../algorithms/floydWarshall');
 
 // Compute shortest path (Dijkstra)
 router.post('/shortest-path', async (req, res) => {
     const { sourceId, destId } = req.body;
+    const companyId = req.user.company_id;
     try {
-        const [nodes] = await db.query('SELECT * FROM warehouses');
-        const [edges] = await db.query('SELECT from_id as `from`, to_id as `to`, distance as weight FROM roads');
+        const nodes = await prisma.warehouses.findMany({
+            where: { company_id: companyId }
+        });
+        
+        const dbEdges = await prisma.roads.findMany({
+            where: { company_id: companyId },
+            select: { from_id: true, to_id: true, distance: true }
+        });
+        const edges = dbEdges.map(e => ({ from: e.from_id, to: e.to_id, weight: e.distance }));
         
         const result = dijkstra(nodes, edges, parseInt(sourceId), parseInt(destId));
 
-        await db.query(
-            'INSERT INTO benchmark_results (algorithm_name, dataset_size, comparisons, swaps, time_ms) VALUES (?, ?, ?, ?, ?)',
-            ['dijkstra', nodes.length, result.metrics.comparisons, result.metrics.swaps, result.metrics.time]
-        );
+        await prisma.benchmark_results.create({
+            data: {
+                company_id: companyId,
+                algorithm_name: 'dijkstra',
+                dataset_size: nodes.length,
+                comparisons: result.metrics.comparisons,
+                swaps: result.metrics.swaps,
+                time_ms: result.metrics.time
+            }
+        });
 
         res.json(result);
     } catch (err) {
@@ -26,9 +40,18 @@ router.post('/shortest-path', async (req, res) => {
 
 // Compute APSP (Floyd-Warshall)
 router.get('/apsp', async (req, res) => {
+    const companyId = req.user.company_id;
     try {
-        const [nodes] = await db.query('SELECT id, name FROM warehouses ORDER BY id');
-        const [edges] = await db.query('SELECT from_id, to_id, distance FROM roads');
+        const nodes = await prisma.warehouses.findMany({
+            where: { company_id: companyId },
+            select: { id: true, name: true },
+            orderBy: { id: 'asc' }
+        });
+        
+        const edges = await prisma.roads.findMany({
+            where: { company_id: companyId },
+            select: { from_id: true, to_id: true, distance: true }
+        });
         
         const n = nodes.length;
         const nodeIds = nodes.map(n => n.id);
@@ -42,16 +65,24 @@ router.get('/apsp', async (req, res) => {
         edges.forEach(e => {
             const u = nodeIndex[e.from_id];
             const v = nodeIndex[e.to_id];
-            distMatrix[u][v] = e.distance;
-            distMatrix[v][u] = e.distance; // Assuming undirected roads
+            if(u !== undefined && v !== undefined) {
+                distMatrix[u][v] = e.distance;
+                distMatrix[v][u] = e.distance; // Assuming undirected roads
+            }
         });
 
         const result = floydWarshall(distMatrix, nodeIds);
 
-        await db.query(
-            'INSERT INTO benchmark_results (algorithm_name, dataset_size, comparisons, swaps, time_ms) VALUES (?, ?, ?, ?, ?)',
-            ['floydWarshall', nodes.length, result.metrics.comparisons, result.metrics.swaps, result.metrics.time]
-        );
+        await prisma.benchmark_results.create({
+            data: {
+                company_id: companyId,
+                algorithm_name: 'floydWarshall',
+                dataset_size: nodes.length,
+                comparisons: result.metrics.comparisons,
+                swaps: result.metrics.swaps,
+                time_ms: result.metrics.time
+            }
+        });
 
         res.json(result);
     } catch (err) {

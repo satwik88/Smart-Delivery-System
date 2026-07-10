@@ -1,25 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const prisma = require('../config/prisma');
 const { dijkstra } = require('../algorithms/dijkstra');
 
 router.get('/:trackingCode', async (req, res) => {
     try {
+        const companyId = req.user.company_id;
         const { trackingCode } = req.params;
         
-        const [orders] = await db.query(`
-            SELECT o.*, v.name as vehicle_name 
-            FROM orders o 
-            LEFT JOIN vehicles v ON o.vehicle_id = v.id 
-            WHERE o.tracking_code = ?
-        `, [trackingCode]);
-        if (orders.length === 0) return res.status(404).json({ error: 'Order not found' });
+        const order = await prisma.orders.findFirst({
+            where: { company_id: companyId, tracking_code: trackingCode },
+            include: { vehicle: true }
+        });
         
-        const order = orders[0];
-
+        if (!order) return res.status(404).json({ error: 'Order not found' });
+        
         // Fetch nodes and edges to run Dijkstra
-        const [nodes] = await db.query('SELECT * FROM warehouses');
-        const [edges] = await db.query('SELECT from_id as `from`, to_id as `to`, distance as weight FROM roads');
+        const nodes = await prisma.warehouses.findMany({ where: { company_id: companyId } });
+        const dbEdges = await prisma.roads.findMany({
+            where: { company_id: companyId },
+            select: { from_id: true, to_id: true, distance: true }
+        });
+        const edges = dbEdges.map(e => ({ from: e.from_id, to: e.to_id, weight: e.distance }));
         
         let routeNodes = [];
         let totalDistance = 0;
@@ -59,7 +61,7 @@ router.get('/:trackingCode', async (req, res) => {
             status: order.status,
             taskSequence,
             currentTaskIndex,
-            vehicleName: order.vehicle_name
+            vehicleName: order.vehicle ? order.vehicle.name : null
         });
 
     } catch (err) {

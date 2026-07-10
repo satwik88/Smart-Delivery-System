@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import clsx from 'clsx';
 import { MoreHorizontal } from 'lucide-react';
 
@@ -33,7 +33,7 @@ const RecentOrdersTable = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/admin/orders`);
+        const response = await api.get('/orders');
         // Slice top 5 for the dashboard
         setOrders(response.data.slice(0, 5));
       } catch (err) {
@@ -76,7 +76,7 @@ const RecentOrdersTable = () => {
                 <td className="py-4 px-2 font-bold text-text-main text-sm">#{order.tracking_code || `ORD-${order.id}`}</td>
                 <td className="py-4 px-2 font-semibold text-text-main text-sm">{order.customer_name}</td>
                 <td className="py-4 px-2 text-text-muted text-xs font-medium">
-                  {order.source_name} → {order.dest_name}
+                  {order.source_warehouse?.name || 'Unknown'} → {order.dest_warehouse?.name || 'Unknown'}
                 </td>
                 <td className="py-4 px-2">
                   <StatusBadge status={order.status} />

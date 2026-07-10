@@ -1,31 +1,34 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const prisma = require('../config/prisma');
 
-// Admin Auth
+// Admin Auth (Deprecated in multi-tenant mode, keeping for legacy compatibility or removal)
+// You would ideally use /api/auth/login for actual users now. 
+// We will just return 410 Gone since we've replaced auth entirely.
 router.post('/auth', (req, res) => {
-    const { password } = req.body;
-    if (password === process.env.ADMIN_PASSCODE) {
-        // Returning a simple static token for this project
-        res.json({ success: true, token: 'slrros_admin_token_xyz' });
-    } else {
-        res.status(401).json({ success: false, error: 'Incorrect code' });
-    }
+    res.status(410).json({ error: 'Auth has moved to /api/auth/login' });
 });
 
 // Get all orders with tracking info
 router.get('/orders', async (req, res) => {
     try {
-        const query = `
-            SELECT o.*, 
-                   s.name as source_name, 
-                   d.name as dest_name
-            FROM orders o
-            LEFT JOIN warehouses s ON o.source_warehouse_id = s.id
-            LEFT JOIN warehouses d ON o.dest_warehouse_id = d.id
-            ORDER BY o.id DESC
-        `;
-        const [rows] = await db.query(query);
+        const companyId = req.user.company_id;
+        const orders = await prisma.orders.findMany({
+            where: { company_id: companyId },
+            include: {
+                source_warehouse: true,
+                dest_warehouse: true
+            },
+            orderBy: { id: 'desc' }
+        });
+        
+        // Map to legacy format
+        const rows = orders.map(o => ({
+            ...o,
+            source_name: o.source_warehouse ? o.source_warehouse.name : null,
+            dest_name: o.dest_warehouse ? o.dest_warehouse.name : null,
+        }));
+        
         res.json(rows);
     } catch (err) {
         console.error("DB Error in /orders:", err);
@@ -35,12 +38,16 @@ router.get('/orders', async (req, res) => {
 
 // Advance delivery simulation
 router.post('/orders/:id/advance', async (req, res) => {
-    const orderId = req.params.id;
+    const orderId = parseInt(req.params.id);
     try {
-        const [rows] = await db.query('SELECT progress_pct FROM orders WHERE id = ?', [orderId]);
-        if (rows.length === 0) return res.status(404).json({ error: 'Order not found' });
+        const companyId = req.user.company_id;
+        const order = await prisma.orders.findFirst({
+            where: { id: orderId, company_id: companyId }
+        });
         
-        let pct = rows[0].progress_pct + 15; // advance by 15% each click
+        if (!order) return res.status(404).json({ error: 'Order not found' });
+        
+        let pct = (order.progress_pct || 0) + 15; // advance by 15% each click
         if (pct >= 100) pct = 100;
 
         let status = 'placed';
@@ -49,7 +56,11 @@ router.post('/orders/:id/advance', async (req, res) => {
         else if (pct >= 40 && pct < 99) status = 'in_transit';
         else if (pct >= 100) status = 'delivered';
 
-        await db.query('UPDATE orders SET progress_pct = ?, status = ? WHERE id = ?', [pct, status, orderId]);
+        await prisma.orders.update({
+            where: { id: orderId },
+            data: { progress_pct: pct, status: status }
+        });
+        
         res.json({ success: true, progress_pct: pct, status });
     } catch (err) {
         res.status(500).json({ error: err.message });

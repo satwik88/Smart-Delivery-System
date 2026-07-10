@@ -1,4 +1,6 @@
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
@@ -6,24 +8,38 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST']
+    }
+});
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/network', require('./routes/network.routes'));
-app.use('/api/routing', require('./routes/routing.routes'));
-app.use('/api/connectivity', require('./routes/connectivity.routes'));
-app.use('/api/scheduling', require('./routes/scheduling.routes'));
-app.use('/api/cargo', require('./routes/cargo.routes'));
-app.use('/api/resources', require('./routes/resources.routes'));
-app.use('/api/orders', require('./routes/orders.routes'));
-app.use('/api/sorting', require('./routes/sorting.routes'));
-app.use('/api/placement', require('./routes/placement.routes'));
-app.use('/api/dashboard', require('./routes/dashboard.routes'));
-app.use('/api/admin', require('./routes/admin.routes'));
-app.use('/api/track', require('./routes/track.routes'));
+app.use('/api/auth', require('./routes/auth.routes'));
+const { authMiddleware } = require('./middleware/auth.middleware');
+
+app.use('/api/network', authMiddleware, require('./routes/network.routes'));
+app.use('/api/routing', authMiddleware, require('./routes/routing.routes'));
+app.use('/api/connectivity', authMiddleware, require('./routes/connectivity.routes'));
+app.use('/api/scheduling', authMiddleware, require('./routes/scheduling.routes'));
+app.use('/api/cargo', authMiddleware, require('./routes/cargo.routes'));
+app.use('/api/resources', authMiddleware, require('./routes/resources.routes'));
+app.use('/api/orders', authMiddleware, require('./routes/orders.routes'));
+app.use('/api/sorting', authMiddleware, require('./routes/sorting.routes'));
+app.use('/api/placement', authMiddleware, require('./routes/placement.routes'));
+app.use('/api/dashboard', authMiddleware, require('./routes/dashboard.routes'));
+app.use('/api/drivers', authMiddleware, require('./routes/drivers.routes'));
+app.use('/api/customers', authMiddleware, require('./routes/customers.routes'));
+app.use('/api/admin', authMiddleware, require('./routes/admin.routes'));
+app.use('/api/track', authMiddleware, require('./routes/track.routes'));
+app.use('/api/billing', authMiddleware, require('./routes/billing.routes'));
+app.use('/api/ai', authMiddleware, require('./routes/ai.routes'));
 
 // Basic health check
 app.get('/api/health', (req, res) => {
@@ -32,6 +48,10 @@ app.get('/api/health', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+// Initialize live operations engine
+const { initLiveTracking } = require('./services/liveTracking');
+initLiveTracking(io);
+
+server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

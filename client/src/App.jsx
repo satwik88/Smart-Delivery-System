@@ -17,6 +17,7 @@ import AdminCustomers from './pages/AdminCustomers';
 import AdminProfile from './pages/AdminProfile';
 import AdminSettings from './pages/AdminSettings';
 import AdminAnalytics from './pages/AdminAnalytics';
+import AdminBilling from './pages/AdminBilling';
 
 // Legacy Admin Pages repurposed
 
@@ -43,6 +44,7 @@ function App() {
             <Route path="drivers" element={<AdminDrivers />} />
             <Route path="customers" element={<AdminCustomers />} />
             <Route path="analytics" element={<AdminAnalytics />} />
+            <Route path="billing" element={<AdminBilling />} />
             <Route path="profile" element={<AdminProfile />} />
             <Route path="settings/*" element={<AdminSettings />} />
           </Route>

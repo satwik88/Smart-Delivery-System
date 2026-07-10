@@ -1,35 +1,32 @@
-# Smart Delivery System
+# Smart Delivery System (Multi-Tenant SaaS)
 
-A comprehensive full-stack application designed to optimize logistics, resource allocation, and delivery routing operations.
+A comprehensive, enterprise-grade multi-tenant platform designed to optimize logistics, resource allocation, and delivery routing operations. Built for delivery companies (couriers, restaurants, pharmacies) to sign up, manage their fleets, track drivers in real-time, and leverage AI insights.
 
 ## Overview
 
-The **Smart Delivery System** provides a complete suite of tools for managing a delivery network. By integrating advanced algorithms on the backend with an interactive and visualized frontend, it solves complex logistical problems such as finding the shortest delivery routes, optimizing truck cargo space, calculating minimum spanning trees for network topography, and dynamically tracking orders.
+The **Smart Delivery System SaaS** provides a complete suite of tools for managing a delivery network across isolated company workspaces. It features:
+- **Multi-Tenant Architecture**: Complete data isolation using Postgres & Prisma.
+- **Role-Based Authentication**: Secure JWT flow for Company Owners and Admins.
+- **Live Operations Engine**: Real-time vehicle tracking via WebSockets on interactive maps.
+- **SaaS Billing (Stripe)**: Automated subscription upgrades via Stripe Checkout.
+- **AI Dispatch Assistant**: An intelligent assistant that queries live fleet data to provide operational insights.
 
 ## Tech Stack
 
 ### Frontend
-- **React (v19)** with **Vite** for fast development and optimized builds.
-- **Tailwind CSS (v4)** for modern and responsive styling.
-- **vis-network** & **Recharts** for interactive graph visualisations and data charts.
-- **Axios** for API communication.
-- **React Router Dom** for client-side routing.
+- **React (v19)** with **Vite** for fast development.
+- **Tailwind CSS (v4)** + **Framer Motion** for a premium, heavily-animated dark/light UI.
+- **React-Leaflet** for interactive map Topography.
+- **Socket.io-client** for real-time Live Tracking ingestion.
+- **Recharts** for analytics and data visualization.
 
 ### Backend
-- **Node.js** with **Express.js** for the RESTful API.
-- **MySQL2** for robust and relational data storage.
-- Custom algorithm implementations for solving complex optimization and sorting problems.
-
-## Key Features & Algorithms
-
-The system implements classic Computer Science algorithms to solve real-world logistical challenges:
-
-- **Delivery Routing**: Utilizes **Dijkstra's** and **Floyd-Warshall** algorithms to calculate the most efficient paths between delivery hubs.
-- **Resource Allocation**: Applies **0/1 Knapsack** and **Fractional Knapsack** algorithms to maximize truck load capacity and value.
-- **Network Topography**: Uses **Kruskal's** and **Prim's** algorithms to determine the minimum spanning tree of the delivery network.
-- **Data Management**: Implements various **Sorting Algorithms** to handle and process large volumes of order data efficiently.
-- **Task Scheduling**: Leverages **Topological Sorting** to determine the correct sequence of dependent tasks.
-- **Other Algorithmic Implementations**: Includes **N-Queens** (for placement constraints), **Subset Sum**, and **Warshall's** algorithms for further network analysis.
+- **Node.js** with **Express.js**.
+- **PostgreSQL** hosted on Neon.
+- **Prisma ORM** for type-safe database migrations and queries.
+- **Socket.io** for the WebSockets engine.
+- **Stripe SDK** for subscription billing.
+- **JWT & bcrypt** for authentication.
 
 ## Project Structure
 
@@ -37,28 +34,30 @@ The system implements classic Computer Science algorithms to solve real-world lo
 Smart-Delivery-System/
 ├── client/                 # React frontend application
 │   ├── src/
-│   │   ├── components/     # Reusable UI elements (MapCanvas, StatusTimeline, etc.)
-│   │   ├── pages/          # Full-page components (AdminLoginPage, CustomerTrackingPage)
-│   │   └── views/          # Module views (Dashboard, DeliveryRouting, ResourceAllocation, etc.)
+│   │   ├── components/     # UI Elements (Layout, AIAssistantWidget, LiveMap)
+│   │   ├── pages/          # Admin views (AdminBilling, AdminDrivers, etc.)
+│   │   └── utils/          # Axios interceptors (api.js)
 │   └── package.json
 │
 ├── server/                 # Node.js Express backend
-│   ├── algorithms/         # Core algorithmic logic
-│   ├── config/             # Database and server configurations
-│   ├── database/           # SQL schemas, seed data, and DB setup scripts
-│   ├── routes/             # Express API routes
+│   ├── config/             # Prisma client initialization
+│   ├── middleware/         # JWT Auth guards
+│   ├── routes/             # REST APIs (auth, billing, ai, dashboard, orders, etc.)
+│   ├── services/           # LiveTracking WebSockets Engine
+│   ├── scripts/            # Database Seeding & Maintenance (seed_postgres.js)
 │   └── package.json
 │
-└── .gitignore              # Global git ignores
+└── README.md
 ```
 
 ## Getting Started
 
 ### Prerequisites
 - [Node.js](https://nodejs.org/) (v18+ recommended)
-- [MySQL](https://www.mysql.com/) Server
+- A [Neon](https://neon.tech/) Postgres Database (or local Postgres).
+- A [Stripe](https://stripe.com/) Developer Account for Billing.
 
-### Installation
+### Installation & Setup
 
 1. **Clone the repository**
    ```bash
@@ -66,33 +65,54 @@ Smart-Delivery-System/
    cd Smart-Delivery-System
    ```
 
-2. **Database Setup**
-   - Ensure your MySQL server is running.
-   - Run the provided SQL scripts in `server/database/schema.sql` to initialize the database tables.
-   - Run `server/database/seed-data.sql` to populate initial mock data.
-   - Configure your `.env` file in the `server` directory with your database credentials:
+2. **Backend Configuration**
+   - Navigate to the server folder and install dependencies:
+     ```bash
+     cd server
+     npm install
+     ```
+   - Create a `.env` file in `server/` with the following variables:
      ```env
-     DB_HOST=localhost
-     DB_USER=root
-     DB_PASSWORD=yourpassword
-     DB_NAME=yourdatabase
+     PORT=5000
+     DATABASE_URL="postgresql://user:pass@host:5432/neondb?sslmode=require"
+     JWT_SECRET="your_jwt_secret"
+     JWT_REFRESH_SECRET="your_refresh_secret"
+     STRIPE_SECRET_KEY="sk_test_..."
+     ```
+   - Push the Prisma schema and seed the database:
+     ```bash
+     npx prisma db push
+     npx prisma generate
+     node scripts/seed_postgres.js
+     ```
+   - Start the backend server:
+     ```bash
+     npm run dev
      ```
 
-3. **Backend Setup**
-   ```bash
-   cd server
-   npm install
-   npm run dev
-   ```
-   The backend will start running (default is usually port 5000 or 3000).
+3. **Frontend Configuration**
+   - Navigate to the client folder and install dependencies:
+     ```bash
+     cd ../client
+     npm install
+     ```
+   - (Optional) Create a `.env` file in `client/` if your backend isn't on port 5000:
+     ```env
+     VITE_API_URL=http://localhost:5000
+     ```
+   - Start the React application:
+     ```bash
+     npm run dev
+     ```
+   - Open your browser to `http://localhost:5173`.
+   - Log in to the Admin Dashboard using:
+     - Master Password: **sas**
 
-4. **Frontend Setup**
-   ```bash
-   cd ../client
-   npm install
-   npm run dev
-   ```
-   Open the provided local URL (typically `http://localhost:5173`) in your browser to view the application.
+## Key Features
+
+- **Billing & Upgrades**: Securely upgrade a tenant to "PRO" using Stripe Checkout to unlock live features.
+- **AI Analytics**: A floating AI Dispatcher that parses human language to query active orders and delays.
+- **Live Maps**: Watch simulated (or real) vehicles move across the global map in real-time using Socket.io.
 
 ## License
 This project is open-source and available under the ISC License.

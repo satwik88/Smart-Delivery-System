@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -25,9 +26,7 @@ const driverIcon = new L.DivIcon({
 
 const LiveMap = () => {
   const [warehouses, setWarehouses] = useState([]);
-  
-  // Simulate driver movement (Mocked for future integration)
-  const [driverPos, setDriverPos] = useState([28.59, 77.25]);
+  const [drivers, setDrivers] = useState([]);
 
   useEffect(() => {
     const fetchWarehouses = async () => {
@@ -40,14 +39,27 @@ const LiveMap = () => {
     };
     fetchWarehouses();
 
-    // Mock driver movement
-    const interval = setInterval(() => {
-      setDriverPos(prev => [
-        prev[0] - 0.0005 + (Math.random() * 0.0002),
-        prev[1] + 0.001 + (Math.random() * 0.0002)
-      ]);
-    }, 2000);
-    return () => clearInterval(interval);
+    // Setup Socket.io
+    const token = localStorage.getItem('adminToken');
+    if (!token) return;
+
+    const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
+      auth: {
+        token: token
+      }
+    });
+
+    socket.on('connect', () => {
+      console.log('Connected to Live Operations Engine');
+    });
+
+    socket.on('driver_locations', (data) => {
+      setDrivers(data);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   return (
@@ -55,8 +67,7 @@ const LiveMap = () => {
       <div className="flex justify-between items-center px-4 pt-2 pb-4">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-bold text-text-main">Live Map</h2>
-          {/* Note to show some data is mocked */}
-          <span className="text-[10px] bg-surface-bg border border-border-main text-text-muted px-2 py-0.5 rounded-full" title="Driver is simulated. Warehouses are real DB data.">Partial Mock</span>
+          <span className="text-[10px] bg-brand-blue/10 border border-brand-blue/20 text-brand-blue px-2 py-0.5 rounded-full" title="Real-time WebSockets Engine">Live Track Enabled</span>
         </div>
         <span className="bg-brand-blue/10 text-brand-blue text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider">Active</span>
       </div>
@@ -75,10 +86,12 @@ const LiveMap = () => {
             ) : null
           ))}
 
-          {/* Mocked Driver */}
-          <Marker position={driverPos} icon={driverIcon}>
-            <Popup>Aman (Out for Delivery - Mocked)</Popup>
-          </Marker>
+          {/* Live Drivers */}
+          {drivers.map(d => (
+            <Marker key={d.id} position={d.pos} icon={driverIcon}>
+              <Popup>{d.name} ({d.status})</Popup>
+            </Marker>
+          ))}
         </MapContainer>
       </div>
     </div>

@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const prisma = require('../config/prisma');
 const { selectionSort, quickSort, mergeSort } = require('../algorithms/sorts');
 
 // Run Sorts
 router.post('/benchmark', async (req, res) => {
     try {
+        const companyId = req.user.company_id;
         const { datasetType, sortKey } = req.body; // 'deliveries', 'packages', 'warehouses'
         
         let data = [];
@@ -20,11 +21,9 @@ router.post('/benchmark', async (req, res) => {
                 { id: 'D6', destination: 'Warehouse E', distance: 5, priority: 3 }
             ];
         } else if (datasetType === 'packages') {
-            const [rows] = await db.query('SELECT * FROM packages');
-            data = rows;
+            data = await prisma.packages.findMany({ where: { company_id: companyId } });
         } else if (datasetType === 'warehouses') {
-            const [rows] = await db.query('SELECT * FROM warehouses');
-            data = rows;
+            data = await prisma.warehouses.findMany({ where: { company_id: companyId } });
         } else {
             return res.status(400).json({ error: 'Invalid datasetType' });
         }
@@ -33,14 +32,22 @@ router.post('/benchmark', async (req, res) => {
         const qResult = quickSort(data, sortKey || 'id');
         const mResult = mergeSort(data, sortKey || 'id');
 
-        await db.query(
-            'INSERT INTO benchmark_results (algorithm_name, dataset_size, comparisons, swaps, time_ms) VALUES (?, ?, ?, ?, ?), (?, ?, ?, ?, ?), (?, ?, ?, ?, ?)',
-            [
-                'selectionSort', data.length, selResult.metrics.comparisons, selResult.metrics.swaps, selResult.metrics.time,
-                'quickSort', data.length, qResult.metrics.comparisons, qResult.metrics.swaps, qResult.metrics.time,
-                'mergeSort', data.length, mResult.metrics.comparisons, mResult.metrics.swaps, mResult.metrics.time
+        await prisma.benchmark_results.createMany({
+            data: [
+                {
+                    company_id: companyId, algorithm_name: 'selectionSort', dataset_size: data.length, 
+                    comparisons: selResult.metrics.comparisons, swaps: selResult.metrics.swaps, time_ms: selResult.metrics.time
+                },
+                {
+                    company_id: companyId, algorithm_name: 'quickSort', dataset_size: data.length, 
+                    comparisons: qResult.metrics.comparisons, swaps: qResult.metrics.swaps, time_ms: qResult.metrics.time
+                },
+                {
+                    company_id: companyId, algorithm_name: 'mergeSort', dataset_size: data.length, 
+                    comparisons: mResult.metrics.comparisons, swaps: mResult.metrics.swaps, time_ms: mResult.metrics.time
+                }
             ]
-        );
+        });
 
         res.json({
             selection: selResult,

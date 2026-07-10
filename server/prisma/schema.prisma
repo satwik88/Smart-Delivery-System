@@ -1,0 +1,228 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model companies {
+  id                Int        @id @default(autoincrement())
+  name              String     @db.VarChar(100)
+  subscription_tier String     @default("FREE") @db.VarChar(50)
+  created_at        DateTime   @default(now())
+  
+  users             users[]
+  warehouses        warehouses[]
+  roads             roads[]
+  vehicles          vehicles[]
+  packages          packages[]
+  vehicle_cargo     vehicle_cargo[]
+  resources         resources[]
+  tasks             tasks[]
+  task_edges        task_edges[]
+  orders            orders[]
+  order_items       order_items[]
+  benchmark_results benchmark_results[]
+}
+
+model users {
+  id            Int         @id @default(autoincrement())
+  company_id    Int
+  company       companies   @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  username      String      @unique @db.VarChar(50)
+  password_hash String      @db.VarChar(255)
+  role          users_role  @default(operator)
+
+  @@index([company_id])
+}
+
+model warehouses {
+  id         Int        @id @default(autoincrement())
+  company_id Int
+  company    companies  @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  name       String     @db.VarChar(100)
+  pos_x      Float
+  pos_y      Float
+  
+  roads_from roads[]    @relation("roads_from_idTowarehouses")
+  roads_to   roads[]    @relation("roads_to_idTowarehouses")
+  packages   packages[]
+  orders_src orders[]   @relation("orders_source_warehouse_idTowarehouses")
+  orders_dst orders[]   @relation("orders_dest_warehouse_idTowarehouses")
+
+  @@index([company_id])
+}
+
+model roads {
+  id         Int        @id @default(autoincrement())
+  company_id Int
+  company    companies  @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  from_id    Int
+  to_id      Int
+  distance   Float
+  cost       Float
+  
+  from_warehouse warehouses @relation("roads_from_idTowarehouses", fields: [from_id], references: [id], onDelete: Cascade)
+  to_warehouse   warehouses @relation("roads_to_idTowarehouses", fields: [to_id], references: [id], onDelete: Cascade)
+
+  @@index([company_id])
+  @@index([from_id])
+  @@index([to_id])
+}
+
+model vehicles {
+  id              Int             @id @default(autoincrement())
+  company_id      Int
+  company         companies       @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  name            String          @db.VarChar(100)
+  capacity_weight Float
+  
+  vehicle_cargo   vehicle_cargo[]
+  orders          orders[]
+
+  @@index([company_id])
+}
+
+model packages {
+  id                       Int             @id @default(autoincrement())
+  company_id               Int
+  company                  companies       @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  name                     String          @db.VarChar(100)
+  weight                   Float
+  value                    Float
+  destination_warehouse_id Int?
+  
+  destination_warehouse    warehouses?     @relation(fields: [destination_warehouse_id], references: [id])
+  vehicle_cargo            vehicle_cargo[]
+
+  @@index([company_id])
+  @@index([destination_warehouse_id])
+}
+
+model vehicle_cargo {
+  id         Int       @id @default(autoincrement())
+  company_id Int
+  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  vehicle_id Int
+  package_id Int
+  selected   Boolean?  @default(false)
+  
+  vehicle    vehicles  @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
+  package    packages  @relation(fields: [package_id], references: [id], onDelete: Cascade)
+
+  @@index([company_id])
+  @@index([package_id])
+  @@index([vehicle_id])
+}
+
+model resources {
+  id         Int       @id @default(autoincrement())
+  company_id Int
+  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  name       String    @db.VarChar(100)
+  weight     Float
+  value      Float
+
+  @@index([company_id])
+}
+
+model tasks {
+  id         Int          @id @default(autoincrement())
+  company_id Int
+  company    companies    @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  name       String       @db.VarChar(100)
+  
+  edges_from task_edges[] @relation("task_edges_from_task_idTotasks")
+  edges_to   task_edges[] @relation("task_edges_to_task_idTotasks")
+
+  @@index([company_id])
+}
+
+model task_edges {
+  id           Int       @id @default(autoincrement())
+  company_id   Int
+  company      companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  from_task_id Int
+  to_task_id   Int
+  
+  from_task    tasks     @relation("task_edges_from_task_idTotasks", fields: [from_task_id], references: [id], onDelete: Cascade)
+  to_task      tasks     @relation("task_edges_to_task_idTotasks", fields: [to_task_id], references: [id], onDelete: Cascade)
+
+  @@index([company_id])
+  @@index([from_task_id])
+  @@index([to_task_id])
+}
+
+model orders {
+  id                  Int           @id @default(autoincrement())
+  company_id          Int
+  company             companies     @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  customer_name       String        @db.VarChar(100)
+  budget              Float
+  created_at          DateTime?     @default(now()) @db.Timestamp(0)
+  tracking_code       String?       @unique @db.VarChar(20)
+  source_warehouse_id Int?
+  dest_warehouse_id   Int?
+  vehicle_id          Int?
+  status              orders_status? @default(placed)
+  progress_pct        Float?        @default(0)
+  
+  source_warehouse    warehouses?   @relation("orders_source_warehouse_idTowarehouses", fields: [source_warehouse_id], references: [id])
+  dest_warehouse      warehouses?   @relation("orders_dest_warehouse_idTowarehouses", fields: [dest_warehouse_id], references: [id])
+  vehicle             vehicles?     @relation(fields: [vehicle_id], references: [id])
+  order_items         order_items[]
+
+  @@index([company_id])
+  @@index([dest_warehouse_id])
+  @@index([source_warehouse_id])
+  @@index([vehicle_id])
+}
+
+model order_items {
+  id           Int       @id @default(autoincrement())
+  company_id   Int
+  company      companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  order_id     Int
+  product_name String    @db.VarChar(100)
+  price        Float
+  
+  order        orders    @relation(fields: [order_id], references: [id], onDelete: Cascade)
+
+  @@index([company_id])
+  @@index([order_id])
+}
+
+model benchmark_results {
+  id             Int       @id @default(autoincrement())
+  company_id     Int
+  company        companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  algorithm_name String    @db.VarChar(50)
+  dataset_size   Int
+  comparisons    Int?
+  swaps          Int?
+  time_ms        Float
+  run_at         DateTime? @default(now()) @db.Timestamp(0)
+
+  @@index([company_id])
+}
+
+enum orders_status {
+  placed
+  verified
+  packed
+  dispatched
+  in_transit
+  delivered
+}
+
+enum users_role {
+  super_admin
+  company_owner
+  branch_manager
+  dispatcher
+  driver
+  customer
+  operator // Keeping this as a legacy role for existing data compatibility if needed
+}

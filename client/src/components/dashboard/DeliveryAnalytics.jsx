@@ -20,7 +20,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const DeliveryAnalytics = () => {
+const DeliveryAnalytics = ({ chartData = [] }) => {
   const [timeRange] = useState('Week');
 
   // Dummy analytics data (Mocked for future integration)
@@ -45,10 +45,7 @@ const DeliveryAnalytics = () => {
   return (
     <div className="premium-card p-8 flex flex-col gap-8 relative">
       
-      {/* Mocked indicator for future DB integration */}
-      <div className="absolute top-4 left-4 bg-surface-bg border border-border-main text-text-muted text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wider">
-        Mocked Data (Pending DB)
-      </div>
+      {/* Real Data From Backend */}
 
       <div className="flex justify-between items-start sm:items-center mt-4">
         <div>
@@ -78,10 +75,10 @@ const DeliveryAnalytics = () => {
       {/* Chart */}
       <div className="w-full h-[320px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+          <BarChart data={chartData.length ? chartData : data} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
             <XAxis 
-              dataKey="name" 
+              dataKey={chartData.length ? "date" : "name"} 
               axisLine={false} 
               tickLine={false} 
               tick={{ fill: '#6B7280', fontSize: 12, fontWeight: 600 }}

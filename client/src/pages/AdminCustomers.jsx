@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MOCK_CUSTOMERS } from '../utils/mockData';
+import api from '../utils/api';
 import { Search, Filter, MoreHorizontal, Mail, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -8,7 +8,34 @@ const AdminCustomers = () => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 15;
 
-  const filtered = MOCK_CUSTOMERS.filter(c => 
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const response = await api.get('/customers');
+        // The endpoint returns { name, totalOrders, totalSpent, lastActive }
+        const formatted = response.data.map((c, i) => ({
+          id: `CUST-${(1000 + i)}`,
+          name: c.name,
+          email: `${c.name.toLowerCase().replace(' ', '.')}@example.com`,
+          address: 'Location from order (mocked)', // Real app would link to customer profile
+          status: c.totalOrders > 5 ? 'Premium' : 'Active',
+          orders: c.totalOrders,
+          spent: c.totalSpent
+        }));
+        setCustomers(formatted);
+      } catch (err) {
+        console.error("Error fetching customers:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCustomers();
+  }, []);
+
+  const filtered = customers.filter(c => 
     c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     c.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -24,7 +51,7 @@ const AdminCustomers = () => {
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-black text-text-main">Customers ({MOCK_CUSTOMERS.length})</h1>
+          <h1 className="text-3xl font-black text-text-main">Customers ({customers.length})</h1>
           <p className="text-text-muted font-medium">Manage clients and order histories.</p>
         </div>
         <div className="flex gap-4">
