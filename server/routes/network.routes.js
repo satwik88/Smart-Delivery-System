@@ -16,6 +16,28 @@ router.get('/warehouses', async (req, res) => {
     }
 });
 
+// PUT update warehouse
+router.put('/warehouses/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const companyId = req.user.company_id;
+        const { address, capacity_sqft, manager_name, status } = req.body;
+
+        const warehouse = await prisma.warehouses.updateMany({
+            where: { id, company_id: companyId },
+            data: {
+                address: address !== undefined ? address : undefined,
+                capacity_sqft: capacity_sqft !== undefined ? parseFloat(capacity_sqft) : undefined,
+                manager_name: manager_name !== undefined ? manager_name : undefined,
+                status: status !== undefined ? status : undefined
+            }
+        });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // GET all roads
 router.get('/roads', async (req, res) => {
     try {

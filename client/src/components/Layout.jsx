@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Package, 
   LayoutDashboard, 
@@ -13,28 +13,43 @@ import {
   Menu,
   X,
   LogOut,
-  CreditCard
+  CreditCard,
+  Truck,
+  Layers,
+  Brain,
+  Zap,
+  Bell
 } from 'lucide-react';
 import clsx from 'clsx';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
+import { useNotifications } from '../context/NotificationContext';
 import CommandPalette from './CommandPalette';
-import NotificationDropdown from './NotificationDropdown';
 import ProfileDropdown from './ProfileDropdown';
 import AIAssistantWidget from './AIAssistantWidget';
 
 const Layout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const { notifications, unreadCount, markAsRead } = useNotifications();
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const navItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/admin/orders', label: 'Orders', icon: Package },
+    { path: '/admin/inventory', label: 'Inventory', icon: Layers },
+    { path: '/admin/fleet', label: 'Fleet', icon: Truck },
+    { path: '/admin/dispatch-rules', label: 'Dispatch Rules', icon: Zap },
+    { path: '/admin/ai-ops', label: 'AI Ops', icon: Brain },
     { path: '/admin/drivers', label: 'Drivers', icon: Car },
     { path: '/admin/customers', label: 'Customers', icon: Users },
     { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
-    { path: '/admin/billing', label: 'Billing', icon: CreditCard },
+    { path: '/admin/finance', label: 'Finance', icon: CreditCard },
+    { path: '/admin/marketplace', label: 'Marketplace', icon: Package },
+    { path: '/admin/developer', label: 'Developer API', icon: Zap },
     { path: '/admin/settings', label: 'Settings', icon: Settings },
   ];
 
@@ -115,8 +130,8 @@ const Layout = () => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Top Header */}
-        <header className="h-20 bg-card-bg border-b border-border-main flex items-center justify-between px-6 shrink-0 z-30">
-          <div className="flex items-center gap-4">
+        <header className="h-20 bg-surface-bg border-b border-border-main flex items-center justify-between px-8 sticky top-0 z-40 transition-colors duration-300">
+          <div className="flex items-center gap-4 flex-1">
             <button 
               className="lg:hidden p-2 text-text-muted hover:text-text-main rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
               onClick={toggleMobileMenu}

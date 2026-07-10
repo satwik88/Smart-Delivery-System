@@ -40,6 +40,18 @@ app.use('/api/admin', authMiddleware, require('./routes/admin.routes'));
 app.use('/api/track', authMiddleware, require('./routes/track.routes'));
 app.use('/api/billing', authMiddleware, require('./routes/billing.routes'));
 app.use('/api/ai', authMiddleware, require('./routes/ai.routes'));
+app.use('/api/fleet', authMiddleware, require('./routes/fleet.routes'));
+app.use('/api/inventory', authMiddleware, require('./routes/inventory.routes'));
+app.use('/api/finance', authMiddleware, require('./routes/finance.routes'));
+app.use('/api/customer', authMiddleware, require('./routes/customer.routes'));
+app.use('/api/superadmin', authMiddleware, require('./routes/superadmin.routes'));
+app.use('/api/dispatch', authMiddleware, require('./routes/dispatch.routes'));
+app.use('/api/notifications', authMiddleware, require('./routes/notifications.routes'));
+
+// Mega Phase APIs
+app.use('/api/public', require('./routes/public.routes'));
+app.use('/api/vision', authMiddleware, require('./routes/vision.routes'));
+app.use('/api/telemetry', require('./routes/telemetry.routes'));
 
 // Basic health check
 app.get('/api/health', (req, res) => {
@@ -50,6 +62,10 @@ const PORT = process.env.PORT || 5000;
 
 // Initialize live operations engine
 const { initLiveTracking } = require('./services/liveTracking');
+
+// We need to pass `io` to app locals so we can use it in routes without circular dependencies
+app.set('io', io);
+
 initLiveTracking(io);
 
 server.listen(PORT, () => {

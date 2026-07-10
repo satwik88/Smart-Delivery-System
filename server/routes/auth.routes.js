@@ -69,11 +69,16 @@ router.post('/login', async (req, res) => {
         }
 
         const user = await prisma.users.findUnique({
-            where: { username }
+            where: { username },
+            include: { company: true }
         });
 
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        if (user.company && user.company.status === 'SUSPENDED' && user.role !== 'super_admin') {
+            return res.status(403).json({ error: 'Company account is suspended. Contact support.' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password_hash);

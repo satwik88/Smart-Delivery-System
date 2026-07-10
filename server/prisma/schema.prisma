@@ -11,6 +11,11 @@ model companies {
   id                Int        @id @default(autoincrement())
   name              String     @db.VarChar(100)
   subscription_tier String     @default("FREE") @db.VarChar(50)
+  status            String     @default("ACTIVE") @db.VarChar(50)
+  stripe_customer   String?    @db.VarChar(255)
+  logo_url          String?    @db.VarChar(255)
+  primary_color     String?    @db.VarChar(50)
+  allowed_ips       String?    @db.Text
   created_at        DateTime   @default(now())
   
   users             users[]
@@ -24,16 +29,35 @@ model companies {
   task_edges        task_edges[]
   orders            orders[]
   order_items       order_items[]
+  order_events      order_events[]
+  order_templates   order_templates[]
+  maintenance_logs  maintenance_logs[]
+  driver_assignments driver_assignments[]
+  inventory_items   inventory_items[]
+  inventory_transactions inventory_transactions[]
   benchmark_results benchmark_results[]
+  financial_transactions financial_transactions[]
+  dispatch_rules    dispatch_rules[]
+  notifications     notifications[]
+  api_keys          api_keys[]
+  audit_logs        audit_logs[]
+  plugins           plugins[]
 }
 
 model users {
   id            Int         @id @default(autoincrement())
-  company_id    Int
-  company       companies   @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  company_id    Int?
+  company       companies?  @relation(fields: [company_id], references: [id], onDelete: Cascade)
   username      String      @unique @db.VarChar(50)
   password_hash String      @db.VarChar(255)
   role          users_role  @default(operator)
+  mfa_secret    String?     @db.VarChar(100)
+  mfa_enabled   Boolean     @default(false)
+  created_at    DateTime    @default(now())
+
+  driver_assignments driver_assignments[]
+  inventory_transactions inventory_transactions[]
+  customer_orders    orders[]    @relation("customer_orders")
 
   @@index([company_id])
 }
@@ -46,11 +70,17 @@ model warehouses {
   pos_x      Float
   pos_y      Float
   
+  address       String?         @db.VarChar(255)
+  capacity_sqft Float?
+  manager_name  String?         @db.VarChar(100)
+  status        warehouse_status @default(ACTIVE)
+  
   roads_from roads[]    @relation("roads_from_idTowarehouses")
   roads_to   roads[]    @relation("roads_to_idTowarehouses")
   packages   packages[]
   orders_src orders[]   @relation("orders_source_warehouse_idTowarehouses")
   orders_dst orders[]   @relation("orders_dest_warehouse_idTowarehouses")
+  inventory_items inventory_items[]
 
   @@index([company_id])
 }
@@ -79,8 +109,19 @@ model vehicles {
   name            String          @db.VarChar(100)
   capacity_weight Float
   
+  type                 vehicle_type    @default(TRUCK)
+  status               vehicle_status  @default(ACTIVE)
+  license_plate        String?         @db.VarChar(50)
+  fuel_efficiency      Float?
+  current_location_lat Float?
+  current_location_lng Float?
+  last_service_date    DateTime?       @db.Timestamp(0)
+  total_distance       Float?          @default(0)
+  
   vehicle_cargo   vehicle_cargo[]
   orders          orders[]
+  maintenance_logs maintenance_logs[]
+  driver_assignments driver_assignments[]
 
   @@index([company_id])
 }
@@ -166,18 +207,39 @@ model orders {
   source_warehouse_id Int?
   dest_warehouse_id   Int?
   vehicle_id          Int?
+  customer_id         Int?
   status              orders_status? @default(placed)
   progress_pct        Float?        @default(0)
+  
+  scheduled_for          DateTime?    @db.Timestamp(0)
+  is_recurring           Boolean      @default(false)
+  recurrence_pattern     String?      @db.VarChar(50)
+  priority               order_priority @default(STANDARD)
+  order_type             order_type   @default(DELIVERY)
+  parent_order_id        Int?
+  delivery_notes         String?      @db.Text
+  dispatcher_notes       String?      @db.Text
+  customer_instructions  String?      @db.Text
+  signature_url          String?      @db.VarChar(500)
+  otp_code               String?      @db.VarChar(10)
+  barcode                String?      @db.VarChar(100)
+  attachments            Json?
   
   source_warehouse    warehouses?   @relation("orders_source_warehouse_idTowarehouses", fields: [source_warehouse_id], references: [id])
   dest_warehouse      warehouses?   @relation("orders_dest_warehouse_idTowarehouses", fields: [dest_warehouse_id], references: [id])
   vehicle             vehicles?     @relation(fields: [vehicle_id], references: [id])
+  customer            users?        @relation("customer_orders", fields: [customer_id], references: [id])
   order_items         order_items[]
+  parent_order        orders?       @relation("orders_split", fields: [parent_order_id], references: [id])
+  child_orders        orders[]      @relation("orders_split")
+  events              order_events[]
 
   @@index([company_id])
   @@index([dest_warehouse_id])
   @@index([source_warehouse_id])
   @@index([vehicle_id])
+  @@index([customer_id])
+  @@index([parent_order_id])
 }
 
 model order_items {
@@ -208,6 +270,190 @@ model benchmark_results {
   @@index([company_id])
 }
 
+model order_events {
+  id          Int      @id @default(autoincrement())
+  company_id  Int
+  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  order_id    Int
+  order       orders   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  status      orders_status
+  description String   @db.Text
+  created_at  DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([company_id])
+  @@index([order_id])
+}
+
+model order_templates {
+  id                    Int      @id @default(autoincrement())
+  company_id            Int
+  company               companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  name                  String   @db.VarChar(100)
+  default_priority      order_priority @default(STANDARD)
+  default_type          order_type @default(DELIVERY)
+  default_instructions  String?  @db.Text
+  created_at            DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([company_id])
+}
+
+model maintenance_logs {
+  id          Int      @id @default(autoincrement())
+  company_id  Int
+  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  vehicle_id  Int
+  vehicle     vehicles @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
+  description String   @db.Text
+  cost        Float    @default(0)
+  date        DateTime @default(now()) @db.Timestamp(0)
+  status      String   @default("COMPLETED") @db.VarChar(50)
+  
+  @@index([company_id])
+  @@index([vehicle_id])
+}
+
+model driver_assignments {
+  id          Int      @id @default(autoincrement())
+  company_id  Int
+  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  vehicle_id  Int
+  vehicle     vehicles @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
+  user_id     Int
+  user        users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  start_time  DateTime @default(now()) @db.Timestamp(0)
+  end_time    DateTime? @db.Timestamp(0)
+  status      String   @default("ACTIVE") @db.VarChar(50)
+
+  @@index([company_id])
+  @@index([vehicle_id])
+  @@index([user_id])
+}
+
+model inventory_items {
+  id              Int        @id @default(autoincrement())
+  company_id      Int
+  company         companies  @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  warehouse_id    Int
+  warehouse       warehouses @relation(fields: [warehouse_id], references: [id], onDelete: Cascade)
+  sku             String     @db.VarChar(50)
+  name            String     @db.VarChar(100)
+  description     String?    @db.Text
+  quantity        Int        @default(0)
+  reorder_point   Int        @default(10)
+  cost_price      Float      @default(0)
+  selling_price   Float      @default(0)
+  
+  transactions    inventory_transactions[]
+
+  @@index([company_id])
+  @@index([warehouse_id])
+  @@index([sku])
+}
+
+model inventory_transactions {
+  id                Int              @id @default(autoincrement())
+  company_id        Int
+  company           companies        @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  item_id           Int
+  item              inventory_items  @relation(fields: [item_id], references: [id], onDelete: Cascade)
+  type              transaction_type
+  quantity_change   Int
+  previous_quantity Int
+  new_quantity      Int
+  user_id           Int?
+  user              users?           @relation(fields: [user_id], references: [id])
+  reference_order_id Int?
+  notes             String?          @db.Text
+  created_at        DateTime         @default(now()) @db.Timestamp(0)
+
+  @@index([company_id])
+  @@index([item_id])
+  @@index([user_id])
+}
+
+model financial_transactions {
+  id              Int                            @id @default(autoincrement())
+  company_id      Int
+  company         companies                      @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  type            financial_transaction_type
+  category        financial_transaction_category
+  amount          Float
+  description     String                         @db.VarChar(255)
+  reference_id    String?                        @db.VarChar(100)
+  created_at      DateTime                       @default(now()) @db.Timestamp(0)
+
+  @@index([company_id])
+  @@index([type])
+  @@index([category])
+}
+
+model dispatch_rules {
+  id                 Int       @id @default(autoincrement())
+  company_id         Int
+  company            companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  name               String    @db.VarChar(100)
+  condition_field    String    @db.VarChar(50)
+  condition_operator String    @db.VarChar(50)
+  condition_value    String    @db.VarChar(255)
+  action_type        String    @db.VarChar(50)
+  action_value       String    @db.VarChar(100)
+  is_active          Boolean   @default(true)
+  created_at         DateTime  @default(now()) @db.Timestamp(0)
+
+  @@index([company_id])
+}
+
+model notifications {
+  id         Int       @id @default(autoincrement())
+  company_id Int
+  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  title      String    @db.VarChar(150)
+  message    String    @db.Text
+  type       String    @db.VarChar(50)
+  is_read    Boolean   @default(false)
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+
+  @@index([company_id])
+}
+
+model api_keys {
+  id          Int       @id @default(autoincrement())
+  company_id  Int
+  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  key         String    @unique @db.VarChar(100)
+  name        String    @db.VarChar(100)
+  last_used   DateTime?
+  created_at  DateTime  @default(now()) @db.Timestamp(0)
+  
+  @@index([company_id])
+}
+
+model audit_logs {
+  id          Int       @id @default(autoincrement())
+  company_id  Int
+  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  user_id     Int?
+  action      String    @db.VarChar(100)
+  description String    @db.Text
+  ip_address  String?   @db.VarChar(50)
+  created_at  DateTime  @default(now()) @db.Timestamp(0)
+
+  @@index([company_id])
+}
+
+model plugins {
+  id          Int       @id @default(autoincrement())
+  company_id  Int
+  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  plugin_id   String    @db.VarChar(100)
+  config      Json?
+  is_active   Boolean   @default(true)
+  created_at  DateTime  @default(now()) @db.Timestamp(0)
+
+  @@index([company_id])
+  @@unique([company_id, plugin_id])
+}
+
 enum orders_status {
   placed
   verified
@@ -215,6 +461,42 @@ enum orders_status {
   dispatched
   in_transit
   delivered
+}
+
+enum order_priority {
+  STANDARD
+  EXPRESS
+  SAME_DAY
+}
+
+enum order_type {
+  DELIVERY
+  PICKUP
+  RETURN
+}
+
+enum vehicle_type {
+  TRUCK
+  VAN
+  BIKE
+}
+
+enum vehicle_status {
+  ACTIVE
+  IN_MAINTENANCE
+  OFF_DUTY
+}
+
+enum warehouse_status {
+  ACTIVE
+  FULL
+  MAINTENANCE
+}
+
+enum transaction_type {
+  IN
+  OUT
+  ADJUSTMENT
 }
 
 enum users_role {
@@ -225,4 +507,17 @@ enum users_role {
   driver
   customer
   operator // Keeping this as a legacy role for existing data compatibility if needed
+}
+
+enum financial_transaction_type {
+  REVENUE
+  EXPENSE
+}
+
+enum financial_transaction_category {
+  ORDER
+  MAINTENANCE
+  PAYROLL
+  SUBSCRIPTION
+  OTHER
 }

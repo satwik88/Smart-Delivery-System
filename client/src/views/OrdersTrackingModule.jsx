@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../utils/api';
-import { Truck, CheckCircle, Search, Filter, MoreHorizontal, PackageOpen } from 'lucide-react';
+import { Truck, CheckCircle, Search, Filter, MoreHorizontal, PackageOpen, UploadCloud, Eye } from 'lucide-react';
 import { motion } from 'framer-motion';
+import OrderDetailsDrawer from './OrderDetailsDrawer';
+import BulkOrderModal from './BulkOrderModal';
 
 const OrdersTrackingModule = () => {
   const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
   const itemsPerPage = 15;
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -64,6 +69,12 @@ const OrdersTrackingModule = () => {
             />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
           </div>
+          <button 
+            onClick={() => setIsBulkModalOpen(true)}
+            className="bg-brand-blue text-white rounded-full px-4 py-2 text-sm font-bold flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-brand-blue/20"
+          >
+            <UploadCloud size={16} /> Bulk Import
+          </button>
           <button className="bg-card-bg border border-border-main rounded-full px-4 py-2 text-sm font-bold flex items-center gap-2 hover:bg-surface-bg transition-colors">
             <Filter size={16} /> Filters
           </button>
@@ -117,14 +128,22 @@ const OrdersTrackingModule = () => {
                   <div className="text-xs font-bold text-text-muted mt-1">{Number(o.progress_pct || 0).toFixed(0)}%</div>
                 </td>
                 <td className="py-4 px-6 text-right">
-                  <button 
-                    onClick={() => advanceDelivery(o.id)}
-                    disabled={o.status === 'delivered'}
-                    className="bg-card-bg border border-border-main hover:bg-brand-blue hover:text-white hover:border-brand-blue text-text-main px-4 py-1.5 rounded-full text-xs font-bold disabled:opacity-30 disabled:hover:bg-card-bg disabled:hover:text-text-main transition-all flex items-center gap-2 ml-auto"
-                  >
-                    {o.status === 'delivered' ? <CheckCircle size={14} /> : <Truck size={14} />}
-                    Advance
-                  </button>
+                  <div className="flex justify-end gap-2">
+                    <button 
+                      onClick={() => { setSelectedOrderId(o.id); setIsDrawerOpen(true); }}
+                      className="bg-card-bg border border-border-main hover:bg-surface-bg text-text-main px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2"
+                    >
+                      <Eye size={14} /> View
+                    </button>
+                    <button 
+                      onClick={() => advanceDelivery(o.id)}
+                      disabled={o.status === 'delivered'}
+                      className="bg-card-bg border border-border-main hover:bg-brand-blue hover:text-white hover:border-brand-blue text-text-main px-3 py-1.5 rounded-xl text-xs font-bold disabled:opacity-30 disabled:hover:bg-card-bg disabled:hover:text-text-main transition-all flex items-center gap-2"
+                    >
+                      {o.status === 'delivered' ? <CheckCircle size={14} /> : <Truck size={14} />}
+                      Advance
+                    </button>
+                  </div>
                 </td>
               </motion.tr>
             )) : (
@@ -158,6 +177,19 @@ const OrdersTrackingModule = () => {
           </div>
         )}
       </div>
+
+      <OrderDetailsDrawer 
+        isOpen={isDrawerOpen} 
+        orderId={selectedOrderId} 
+        onClose={() => { setIsDrawerOpen(false); setSelectedOrderId(null); }}
+        onVerified={() => fetchOrders()}
+      />
+
+      <BulkOrderModal 
+        isOpen={isBulkModalOpen}
+        onClose={() => setIsBulkModalOpen(false)}
+        onImported={() => fetchOrders()}
+      />
     </div>
   );
 };

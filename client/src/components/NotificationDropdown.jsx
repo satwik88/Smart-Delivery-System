@@ -1,29 +1,17 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, Package, AlertTriangle, DollarSign, CheckCircle2, MoreHorizontal } from 'lucide-react';
+import { useNotifications } from '../context/NotificationContext';
 
 const NotificationDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const initialNotifications = [
-    { id: 1, title: 'Delivery Delayed', desc: 'TRK-89231 is delayed due to traffic.', type: 'alert', time: '5m ago', read: false },
-    { id: 2, title: 'New Order Received', desc: 'TRK-90012 from John Doe.', type: 'order', time: '12m ago', read: false },
-    { id: 3, title: 'Payment Confirmed', desc: '$450.00 settled for batch #82.', type: 'payment', time: '1h ago', read: true },
-    { id: 4, title: 'Driver Online', desc: 'Sarah Smith started her shift.', type: 'success', time: '2h ago', read: true },
-  ];
-
-  const [notifications, setNotifications] = useState(initialNotifications);
-  
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  const markAllRead = () => setNotifications(notifications.map(n => ({ ...n, read: true })));
+  const { notifications, unreadCount, markAllAsRead, markAsRead } = useNotifications();
   
   const getIcon = (type) => {
     switch(type) {
-      case 'alert': return <div className="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center"><AlertTriangle size={14}/></div>;
-      case 'order': return <div className="w-8 h-8 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center"><Package size={14}/></div>;
-      case 'payment': return <div className="w-8 h-8 rounded-full bg-green-100 text-green-500 flex items-center justify-center"><DollarSign size={14}/></div>;
-      case 'success': return <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-500 flex items-center justify-center"><CheckCircle2 size={14}/></div>;
+      case 'WARNING': return <div className="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center"><AlertTriangle size={14}/></div>;
+      case 'INFO': return <div className="w-8 h-8 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center"><Package size={14}/></div>;
+      case 'SUCCESS': return <div className="w-8 h-8 rounded-full bg-green-100 text-green-500 flex items-center justify-center"><CheckCircle2 size={14}/></div>;
       default: return <div className="w-8 h-8 rounded-full bg-gray-100 text-text-muted flex items-center justify-center"><Bell size={14}/></div>;
     }
   };
@@ -59,7 +47,7 @@ const NotificationDropdown = () => {
                 <h3 className="font-bold text-text-main">Notifications</h3>
                 <div className="flex gap-2">
                   {unreadCount > 0 && (
-                    <button onClick={markAllRead} className="text-xs font-bold text-brand-blue hover:underline">Mark all read</button>
+                    <button onClick={markAllAsRead} className="text-xs font-bold text-brand-blue hover:underline">Mark all read</button>
                   )}
                 </div>
               </div>
@@ -73,12 +61,12 @@ const NotificationDropdown = () => {
                 ) : (
                   <div className="flex flex-col">
                     {notifications.map((notif) => (
-                      <div key={notif.id} className={`flex items-start gap-3 p-4 border-b border-gray-50 hover:bg-surface-bg transition-colors cursor-pointer ${!notif.read ? 'bg-brand-blue/5' : ''}`}>
+                      <div key={notif.id} onClick={() => { if(!notif.is_read) markAsRead(notif.id); }} className={`flex items-start gap-3 p-4 border-b border-gray-50 hover:bg-surface-bg transition-colors cursor-pointer ${!notif.is_read ? 'bg-brand-blue/5' : ''}`}>
                         {getIcon(notif.type)}
                         <div className="flex-1">
-                          <p className={`text-sm ${!notif.read ? 'font-bold text-text-main' : 'font-semibold text-gray-700'}`}>{notif.title}</p>
-                          <p className="text-xs font-medium text-text-muted mt-0.5 leading-snug">{notif.desc}</p>
-                          <p className="text-[10px] font-bold text-text-muted uppercase mt-2">{notif.time}</p>
+                          <p className={`text-sm ${!notif.is_read ? 'font-bold text-text-main' : 'font-semibold text-gray-700'}`}>{notif.title}</p>
+                          <p className="text-xs font-medium text-text-muted mt-0.5 leading-snug">{notif.message}</p>
+                          <p className="text-[10px] font-bold text-text-muted uppercase mt-2">{new Date(notif.created_at).toLocaleTimeString()}</p>
                         </div>
                         <button className="text-gray-300 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
                           <MoreHorizontal size={14} />
