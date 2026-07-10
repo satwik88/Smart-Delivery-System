@@ -15,7 +15,7 @@ jobs:
       uses: docker/setup-buildx-action@v2
 
     - name: Build Docker Image
-      run: docker-compose build
+      run: docker compose build
 
     # In a real scenario, this would push to ECR/DockerHub and deploy to K8s/ECS
     - name: Deploy Placeholder
