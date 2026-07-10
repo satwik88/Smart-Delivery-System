@@ -14,7 +14,7 @@ import SuperAdminGuard from './components/SuperAdminGuard';
 import SuperAdminDashboard from './views/SuperAdminDashboard';
 import Layout from './components/Layout';
 import Dashboard from './views/Dashboard';
-import ProfitLossLedgerModule from './views/ProfitLossLedgerModule';
+import FinancialModule from './views/FinancialModule';
 import DispatchRulesModule from './views/DispatchRulesModule';
 import OrdersTrackingModule from './views/OrdersTrackingModule';
 import FleetManagementModule from './views/FleetManagementModule';
@@ -76,13 +76,13 @@ function App() {
             <Route path="drivers" element={<AdminDrivers />} />
             <Route path="customers" element={<AdminCustomers />} />
             <Route path="analytics" element={<BusinessIntelligenceModule />} />
-            <Route path="finance" element={<ProfitLossLedgerModule />} />
+            <Route path="finance" element={<FinancialModule />} />
             <Route path="developer" element={<DeveloperSettings />} />
             <Route path="marketplace" element={<MarketplaceModule />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="settings/*" element={<AdminSettings />} />
             <Route path="profile" element={<AdminProfile />} />
-            <Route path="finance/ledger" element={<ProfitLossLedgerModule />} />
+            <Route path="finance/ledger" element={<FinancialModule />} />
             
             {/* Phase 14: Dispatch Rules */}
             <Route path="dispatch-rules" element={<DispatchRulesModule />} />
