@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import api from '../utils/api';
 import { Truck, CheckCircle, Search, Filter, MoreHorizontal, PackageOpen, UploadCloud, Eye } from 'lucide-react';
 import { motion } from 'framer-motion';
-import OrderDetailsDrawer from './OrderDetailsDrawer';
-import BulkOrderModal from './BulkOrderModal';
+import OrderDetailsDrawer from '../components/dashboard/OrderDetailsDrawer';
+import BulkOrderModal from '../components/dashboard/BulkOrderModal';
 
 const OrdersTrackingModule = () => {
   const [orders, setOrders] = useState([]);
