@@ -175,13 +175,19 @@ router.put('/:id/telemetry', async (req, res) => {
         const id = parseInt(req.params.id);
         const { lat, lng } = req.body;
         
-        const vehicle = await prisma.vehicles.updateMany({
+        await prisma.vehicles.updateMany({
             where: { id, company_id: companyId },
             data: {
                 current_location_lat: parseFloat(lat),
                 current_location_lng: parseFloat(lng)
             }
         });
+
+        // Broadcast updated coordinates
+        const io = req.app.get('io');
+        const { broadcastDriverLocations } = require('../services/liveTracking');
+        broadcastDriverLocations(io, companyId);
+
         res.json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });

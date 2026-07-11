@@ -4,6 +4,7 @@ import { io } from 'socket.io-client';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { AlertCircle } from 'lucide-react';
 
 // Fix for default markers
 delete L.Icon.Default.prototype._getIconUrl;
@@ -78,21 +79,35 @@ const LiveMap = () => {
             url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           />
           
-          {warehouses.map(w => (
-            w.lat && w.lng ? (
-              <Marker key={w.id} position={[w.lat, w.lng]} icon={warehouseIcon}>
+          {warehouses.map(w => {
+            const lat = w.lat || w.pos_x;
+            const lng = w.lng || w.pos_y;
+            return lat && lng ? (
+              <Marker key={w.id} position={[lat, lng]} icon={warehouseIcon}>
                 <Popup>{w.name}</Popup>
               </Marker>
-            ) : null
-          ))}
+            ) : null;
+          })}
 
           {/* Live Drivers */}
           {drivers.map(d => (
-            <Marker key={d.id} position={d.pos} icon={driverIcon}>
-              <Popup>{d.name} ({d.status})</Popup>
-            </Marker>
+            d.pos && d.pos[0] && d.pos[1] ? (
+              <Marker key={d.id} position={d.pos} icon={driverIcon}>
+                <Popup>{d.name} ({d.status})</Popup>
+              </Marker>
+            ) : null
           ))}
         </MapContainer>
+
+        {drivers.length === 0 && (
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center text-white z-[1000] p-4 text-center">
+            <AlertCircle className="text-yellow-500 mb-2 animate-bounce" size={32} />
+            <p className="font-black text-sm">No Active Deliveries</p>
+            <p className="text-[10px] text-gray-300 max-w-xs mt-1 font-semibold">
+              There are no orders currently in transit. The map will display active drivers once an order status is updated to 'In Transit'.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

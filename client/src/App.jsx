@@ -33,6 +33,10 @@ import AdminProfile from './pages/AdminProfile';
 import AdminSettings from './pages/AdminSettings';
 import AdminAnalytics from './pages/AdminAnalytics';
 
+import DriverGuard from './components/DriverGuard';
+import DriverLoginPage from './pages/DriverLoginPage';
+import DriverDashboardPage from './pages/DriverDashboardPage';
+
 // Legacy Admin Pages repurposed
 
 function App() {
@@ -49,6 +53,12 @@ function App() {
         <Route path="/customer/login" element={<CustomerLoginPage />} />
         <Route path="/customer" element={<CustomerGuard />}>
           <Route path="portal" element={<CustomerPortalModule />} />
+        </Route>
+
+        {/* Driver Portal Routes */}
+        <Route path="/driver/login" element={<DriverLoginPage />} />
+        <Route path="/driver" element={<DriverGuard />}>
+          <Route path="dashboard" element={<DriverDashboardPage />} />
         </Route>
         
         {/* Phase 3: Admin Routes */}

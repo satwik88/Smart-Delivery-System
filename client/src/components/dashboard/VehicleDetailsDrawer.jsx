@@ -9,6 +9,9 @@ const VehicleDetailsDrawer = ({ vehicleId, isOpen, onClose, onUpdate }) => {
   const [tab, setTab] = useState('overview'); // overview, maintenance, assignments
   const [newLog, setNewLog] = useState({ description: '', cost: '' });
   const [addingLog, setAddingLog] = useState(false);
+  const [allDrivers, setAllDrivers] = useState([]);
+  const [selectedDriverId, setSelectedDriverId] = useState('');
+  const [assigningDriver, setAssigningDriver] = useState(false);
 
   useEffect(() => {
     if (isOpen && vehicleId) {
@@ -16,6 +19,37 @@ const VehicleDetailsDrawer = ({ vehicleId, isOpen, onClose, onUpdate }) => {
       setTab('overview');
     }
   }, [isOpen, vehicleId]);
+
+  useEffect(() => {
+    if (isOpen && tab === 'assignments') {
+      fetchDrivers();
+    }
+  }, [isOpen, tab]);
+
+  const fetchDrivers = async () => {
+    try {
+      const res = await api.get('/drivers');
+      setAllDrivers(res.data.drivers || []);
+    } catch (err) {
+      console.error("Error fetching drivers", err);
+    }
+  };
+
+  const handleAssignDriver = async (e) => {
+    e.preventDefault();
+    if (!selectedDriverId) return;
+    setAssigningDriver(true);
+    try {
+      await api.post(`/fleet/${vehicleId}/assignments`, { user_id: parseInt(selectedDriverId) });
+      setSelectedDriverId('');
+      fetchVehicleDetails();
+      if (onUpdate) onUpdate();
+    } catch (err) {
+      alert("Failed to assign driver");
+    } finally {
+      setAssigningDriver(false);
+    }
+  };
 
   const fetchVehicleDetails = async () => {
     setLoading(true);
@@ -180,6 +214,30 @@ const VehicleDetailsDrawer = ({ vehicleId, isOpen, onClose, onUpdate }) => {
 
                   {tab === 'assignments' && (
                     <div className="space-y-6">
+                      <div className="bg-surface-bg p-5 rounded-2xl border border-border-main">
+                        <h3 className="text-sm font-black text-text-main uppercase tracking-wider mb-4 flex items-center gap-2"><User size={16}/> Assign Driver</h3>
+                        <form onSubmit={handleAssignDriver} className="flex gap-2">
+                          <select 
+                            value={selectedDriverId}
+                            onChange={e => setSelectedDriverId(e.target.value)}
+                            required
+                            className="flex-1 bg-card-bg border border-border-main rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue text-text-main"
+                          >
+                            <option value="">Select a driver...</option>
+                            {allDrivers.map(d => (
+                              <option key={d.id} value={d.id}>{d.username}</option>
+                            ))}
+                          </select>
+                          <button 
+                            type="submit" 
+                            disabled={assigningDriver || !selectedDriverId}
+                            className="bg-brand-blue text-white rounded-xl px-5 py-2.5 font-bold text-xs shadow-md shadow-brand-blue/20 hover:opacity-95 disabled:opacity-50"
+                          >
+                            {assigningDriver ? 'Assigning...' : 'Assign'}
+                          </button>
+                        </form>
+                      </div>
+
                       <div className="bg-surface-bg p-5 rounded-2xl border border-border-main">
                         <h3 className="text-sm font-black text-text-main uppercase tracking-wider mb-4 flex items-center gap-2"><User size={16}/> Assignment History</h3>
                         <div className="space-y-3">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Clock, MapPin, CheckCircle, Package, Key, ScanLine } from 'lucide-react';
+import { X, Clock, MapPin, CheckCircle, Package, Key, ScanLine, Truck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../utils/api';
 
@@ -9,12 +9,41 @@ const OrderDetailsDrawer = ({ orderId, isOpen, onClose, onVerified }) => {
   const [loading, setLoading] = useState(false);
   const [otp, setOtp] = useState('');
   const [verifying, setVerifying] = useState(false);
+  const [vehicles, setVehicles] = useState([]);
+  const [selectedVehicleId, setSelectedVehicleId] = useState('');
+  const [assigningVehicle, setAssigningVehicle] = useState(false);
 
   useEffect(() => {
     if (isOpen && orderId) {
       fetchOrderDetails();
+      fetchVehicles();
     }
   }, [isOpen, orderId]);
+
+  const fetchVehicles = async () => {
+    try {
+      const res = await api.get('/fleet');
+      setVehicles(res.data || []);
+    } catch (err) {
+      console.error("Error fetching vehicles", err);
+    }
+  };
+
+  const handleAssignVehicle = async (e) => {
+    e.preventDefault();
+    if (!selectedVehicleId) return;
+    setAssigningVehicle(true);
+    try {
+      await api.put(`/orders/${orderId}`, { vehicle_id: parseInt(selectedVehicleId) });
+      setSelectedVehicleId('');
+      fetchOrderDetails();
+      if (onVerified) onVerified();
+    } catch (err) {
+      alert("Failed to assign vehicle");
+    } finally {
+      setAssigningVehicle(false);
+    }
+  };
 
   const fetchOrderDetails = async () => {
     setLoading(true);
@@ -134,6 +163,37 @@ const OrderDetailsDrawer = ({ orderId, isOpen, onClose, onVerified }) => {
                       <span className="font-medium text-text-muted w-20">Type:</span>
                       <span className="font-bold text-text-main">{order.order_type}</span>
                     </div>
+                    <div className="flex items-center gap-3 text-sm">
+                      <Truck size={16} className="text-gray-400" />
+                      <span className="font-medium text-text-muted w-20">Vehicle:</span>
+                      <span className="font-bold text-text-main">{order.vehicle ? `${order.vehicle.name} (${order.vehicle.license_plate})` : 'Unassigned'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Assignment Form */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-black text-text-muted uppercase tracking-widest">Assign Vehicle</h3>
+                  <div className="bg-surface-bg p-4 rounded-2xl">
+                    <form onSubmit={handleAssignVehicle} className="flex gap-2">
+                      <select
+                        value={selectedVehicleId}
+                        onChange={e => setSelectedVehicleId(e.target.value)}
+                        className="flex-1 bg-card-bg border border-border-main rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand-blue text-text-main"
+                      >
+                        <option value="">Select a vehicle...</option>
+                        {vehicles.map(v => (
+                          <option key={v.id} value={v.id}>{v.name} ({v.license_plate || 'No Plate'})</option>
+                        ))}
+                      </select>
+                      <button
+                        type="submit"
+                        disabled={assigningVehicle || !selectedVehicleId}
+                        className="bg-brand-blue text-white rounded-xl px-4 py-2 font-bold text-xs shadow-md shadow-brand-blue/20 hover:opacity-95 disabled:opacity-50"
+                      >
+                        {assigningVehicle ? 'Assigning...' : 'Assign'}
+                      </button>
+                    </form>
                   </div>
                 </div>
 
