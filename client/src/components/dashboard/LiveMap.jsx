@@ -67,7 +67,7 @@ const LiveMap = () => {
       <div className="flex justify-between items-center px-4 pt-2 pb-4">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-bold text-text-main">Live Map</h2>
-          <span className="text-[10px] bg-brand-blue/10 border border-brand-blue/20 text-brand-blue px-2 py-0.5 rounded-full" title="Real-time WebSockets Engine">Live Track Enabled</span>
+          <span className="text-[10px] bg-warning/10 border border-warning/20 text-warning px-2 py-0.5 rounded-full" title="This is a mock simulation.">Demo Simulation</span>
         </div>
         <span className="bg-brand-blue/10 text-brand-blue text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider">Active</span>
       </div>

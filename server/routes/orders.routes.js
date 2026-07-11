@@ -137,6 +137,19 @@ router.post('/', async (req, res) => {
             }
         });
 
+        if (order.budget > 0) {
+            await prisma.financial_transactions.create({
+                data: {
+                    company_id: companyId,
+                    type: 'REVENUE',
+                    category: 'ORDER',
+                    amount: order.budget,
+                    description: `Revenue from Order ${order.tracking_code}`,
+                    reference_id: order.tracking_code
+                }
+            });
+        }
+
         // Broadcast a global notification
         const io = req.app.get('io');
         await broadcastNotification(io, companyId, 'New Order Placed', `Order ${order.tracking_code} was successfully placed.`, 'SUCCESS');

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Package, 
@@ -28,6 +28,9 @@ import CommandPalette from './CommandPalette';
 import ProfileDropdown from './ProfileDropdown';
 import AIAssistantWidget from './AIAssistantWidget';
 import NotificationDropdown from './NotificationDropdown';
+import QuickActions from './QuickActions';
+import CreateOrderModal from './dashboard/CreateOrderModal';
+import AddDriverModal from './dashboard/AddDriverModal';
 
 const Layout = () => {
   const location = useLocation();
@@ -37,6 +40,14 @@ const Layout = () => {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false);
+  const [isAddDriverOpen, setIsAddDriverOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpenCreateOrder = () => setIsCreateOrderOpen(true);
+    window.addEventListener('open-create-order', handleOpenCreateOrder);
+    return () => window.removeEventListener('open-create-order', handleOpenCreateOrder);
+  }, []);
 
   const navItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -44,7 +55,7 @@ const Layout = () => {
     { path: '/admin/inventory', label: 'Inventory', icon: Layers },
     { path: '/admin/fleet', label: 'Fleet', icon: Truck },
     { path: '/admin/dispatch-rules', label: 'Dispatch Rules', icon: Zap },
-    { path: '/admin/ai-ops', label: 'AI Ops', icon: Brain },
+    { path: '/admin/ai-ops', label: 'Automated Ops', icon: Brain },
     { path: '/admin/drivers', label: 'Drivers', icon: Car },
     { path: '/admin/customers', label: 'Customers', icon: Users },
     { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
@@ -165,6 +176,7 @@ const Layout = () => {
               <Search size={18} strokeWidth={2} />
             </button>
 
+            <QuickActions onCreateOrder={() => setIsCreateOrderOpen(true)} onAddDriver={() => setIsAddDriverOpen(true)} />
             <NotificationDropdown />
             <div className="w-px h-6 bg-border-main hidden md:block"></div>
             <ProfileDropdown />
@@ -181,6 +193,19 @@ const Layout = () => {
 
       <AIAssistantWidget />
       <CommandPalette isOpen={isCommandOpen} onClose={() => setIsCommandOpen(false)} />
+      <CreateOrderModal 
+        isOpen={isCreateOrderOpen} 
+        onClose={() => setIsCreateOrderOpen(false)} 
+        onCreated={() => {
+            // Optional: trigger global refresh event or context update
+            window.dispatchEvent(new Event('order-created'));
+        }} 
+      />
+      <AddDriverModal
+        isOpen={isAddDriverOpen}
+        onClose={() => setIsAddDriverOpen(false)}
+        onAdded={() => setIsAddDriverOpen(false)}
+      />
     </div>
   );
 };

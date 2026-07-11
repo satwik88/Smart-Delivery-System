@@ -52,6 +52,9 @@ app.use('/api/notifications', authMiddleware, require('./routes/notifications.ro
 app.use('/api/public', require('./routes/public.routes'));
 app.use('/api/vision', authMiddleware, require('./routes/vision.routes'));
 app.use('/api/telemetry', require('./routes/telemetry.routes'));
+app.use('/api/developer', authMiddleware, require('./routes/developer.routes'));
+app.use('/api/plugins', authMiddleware, require('./routes/plugins.routes'));
+app.use('/api/settings', authMiddleware, require('./routes/settings.routes'));
 
 // Basic health check
 app.get('/api/health', (req, res) => {

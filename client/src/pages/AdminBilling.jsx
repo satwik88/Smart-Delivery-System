@@ -121,7 +121,7 @@ const AdminBilling = () => {
               <li className="flex items-center gap-3 text-sm font-bold text-brand-blue"><CheckCircle size={18} className="text-brand-blue" /> Real-time Live Operations Map</li>
               <li className="flex items-center gap-3 text-sm font-medium"><CheckCircle size={18} className="text-brand-blue" /> Unlimited Orders</li>
               <li className="flex items-center gap-3 text-sm font-medium"><CheckCircle size={18} className="text-brand-blue" /> Priority 24/7 Support</li>
-              <li className="flex items-center gap-3 text-sm font-medium"><CheckCircle size={18} className="text-brand-blue" /> Advanced AI Analytics (Coming Soon)</li>
+              <li className="flex items-center gap-3 text-sm font-medium"><CheckCircle size={18} className="text-brand-blue" /> Advanced Algorithms (Coming Soon)</li>
             </ul>
             
             <button 

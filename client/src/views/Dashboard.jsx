@@ -43,7 +43,10 @@ const Dashboard = () => {
             <h1 className="text-[2.75rem] leading-tight font-black text-text-main tracking-tight">Welcome back, Satwik 👋</h1>
             <p className="text-text-muted mt-1 text-base font-medium">Here's today's logistics overview and delivery performance.</p>
           </div>
-          <button className="bg-brand-blue hover:bg-blue-700 text-white px-7 py-3.5 rounded-full text-[15px] font-bold shadow-[0_8px_16px_rgba(47,68,255,0.25)] hover:shadow-[0_12px_24px_rgba(47,68,255,0.35)] hover:-translate-y-1 transition-all duration-300 flex items-center gap-2">
+          <button 
+            onClick={() => window.dispatchEvent(new Event('open-create-order'))}
+            className="bg-brand-blue hover:bg-blue-700 text-white px-7 py-3.5 rounded-full text-[15px] font-bold shadow-[0_8px_16px_rgba(47,68,255,0.25)] hover:shadow-[0_12px_24px_rgba(47,68,255,0.35)] hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
+          >
             <Plus size={20} strokeWidth={2.5} /> Create Delivery
           </button>
         </div>

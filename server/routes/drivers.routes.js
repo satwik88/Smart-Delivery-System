@@ -9,7 +9,15 @@ router.get('/', async (req, res) => {
         const companyId = req.user.company_id;
         const drivers = await prisma.users.findMany({
             where: { company_id: companyId, role: 'driver' },
-            select: { id: true, username: true, role: true }
+            select: { 
+                id: true, 
+                username: true, 
+                role: true,
+                driver_assignments: {
+                    where: { status: 'ACTIVE' },
+                    include: { vehicle: true }
+                }
+            }
         });
         
         const vehicles = await prisma.vehicles.findMany({

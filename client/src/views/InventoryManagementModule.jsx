@@ -3,6 +3,7 @@ import api from '../utils/api';
 import { Package, Search, Plus, AlertTriangle, ArrowUpDown, History } from 'lucide-react';
 import { motion } from 'framer-motion';
 import StockAdjustmentModal from '../components/dashboard/StockAdjustmentModal';
+import AddInventoryModal from '../components/dashboard/AddInventoryModal';
 
 const InventoryManagementModule = () => {
   const [items, setItems] = useState([]);
@@ -10,6 +11,7 @@ const InventoryManagementModule = () => {
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const fetchInventory = useCallback(async () => {
     try {
@@ -52,7 +54,10 @@ const InventoryManagementModule = () => {
             />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
           </div>
-          <button className="bg-brand-blue text-white rounded-full px-5 py-2.5 text-sm font-bold flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-brand-blue/20">
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-brand-blue text-white rounded-full px-5 py-2.5 text-sm font-bold flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-brand-blue/20"
+          >
             <Plus size={18} /> New Item
           </button>
         </div>
@@ -135,6 +140,11 @@ const InventoryManagementModule = () => {
         item={selectedItem}
         onClose={() => { setIsAdjustModalOpen(false); setSelectedItem(null); }}
         onAdjusted={() => fetchInventory()}
+      />
+      <AddInventoryModal 
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdded={() => fetchInventory()}
       />
     </div>
   );

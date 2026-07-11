@@ -6,7 +6,7 @@ import api from '../utils/api';
 const AIAssistantWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, role: 'ai', text: "Hello! I'm your AI Dispatch Assistant. Ask me about your active orders, drivers, or potential delays." }
+    { id: 1, role: 'ai', text: "Hello! I'm your Rules Engine Dispatch Assistant. Ask me about your active orders, drivers, or potential delays." }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -63,7 +63,7 @@ const AIAssistantWidget = () => {
                   <Bot size={20} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm leading-tight">AI Dispatcher</h3>
+                  <h3 className="font-bold text-sm leading-tight">Rules Engine Dispatcher</h3>
                   <p className="text-[10px] font-medium text-blue-100 uppercase tracking-wider flex items-center gap-1"><Sparkles size={10}/> SLRROS Intelligence</p>
                 </div>
               </div>

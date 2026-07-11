@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { motion } from 'framer-motion';
 import { Search, Filter, Star, Truck, Phone, Navigation } from 'lucide-react';
+import AddDriverModal from '../components/dashboard/AddDriverModal';
 
 const AdminDrivers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const itemsPerPage = 20;
 
-  useEffect(() => {
-    const fetchDrivers = async () => {
+  const fetchDrivers = async () => {
       try {
         const response = await api.get('/drivers');
         // The endpoint returns { drivers, vehicles }
@@ -19,9 +20,9 @@ const AdminDrivers = () => {
         const formatted = response.data.drivers.map((d, i) => ({
           id: `DRV-${d.id}`,
           name: d.username,
-          status: 'Available', // Mock status for UI
+          status: d.driver_assignments?.[0]?.status === 'ACTIVE' ? 'On Delivery' : 'Available',
           rating: '4.8',
-          vehicle: response.data.vehicles[i % response.data.vehicles.length]?.name || 'Unknown',
+          vehicle: d.driver_assignments?.[0]?.vehicle?.name || 'Unassigned',
           phone: '+1 (555) 010-' + (1000 + i),
           deliveries: Math.floor(Math.random() * 500) + 50
         }));
@@ -32,6 +33,8 @@ const AdminDrivers = () => {
         setLoading(false);
       }
     };
+
+  useEffect(() => {
     fetchDrivers();
   }, []);
 
@@ -65,7 +68,10 @@ const AdminDrivers = () => {
           <button className="bg-card-bg border border-border-main rounded-full px-4 py-2 text-sm font-bold flex items-center gap-2 hover:bg-surface-bg">
             <Filter size={16} /> Filters
           </button>
-          <button className="bg-brand-blue text-white rounded-full px-5 py-2 text-sm font-bold hover:bg-brand-dark transition-colors shadow-md shadow-brand-blue/20">
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-brand-blue text-white rounded-full px-5 py-2 text-sm font-bold hover:bg-brand-dark transition-colors shadow-md shadow-brand-blue/20"
+          >
             + Add Driver
           </button>
         </div>
@@ -141,6 +147,12 @@ const AdminDrivers = () => {
           </button>
         </div>
       </div>
+
+      <AddDriverModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+        onAdded={() => fetchDrivers()} 
+      />
     </div>
   );
 };

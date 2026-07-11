@@ -205,7 +205,7 @@ const BusinessIntelligenceModule = () => {
                     transition={{ delay: 0.4 }}
                     className="bg-card-bg border border-border-main p-6 rounded-2xl min-h-[300px] flex flex-col"
                 >
-                    <h3 className="font-bold text-lg mb-4 text-text-main">AI Demand Forecasting (Next 7 Days)</h3>
+                    <h3 className="font-bold text-lg mb-4 text-text-main">Algorithmic Demand Forecasting (Next 7 Days)</h3>
                     <div className="flex-1 w-full h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={demandData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

@@ -10,7 +10,7 @@ const AIOperationsModule = () => {
   
   // Chat state
   const [messages, setMessages] = useState([
-    { role: 'ai', text: "Hello! I'm your AI Operations Assistant. I'm connected to your live fleet, inventory, and order data. How can I help you optimize today?" }
+    { role: 'ai', text: "Hello! I'm your Automated Operations Assistant. I'm connected to your live fleet, inventory, and order data. How can I help you optimize today?" }
   ]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
@@ -75,7 +75,7 @@ const AIOperationsModule = () => {
         <div>
           <h1 className="text-3xl font-black text-text-main flex items-center gap-3">
             <Brain size={32} className="text-brand-blue" />
-            AI Operations Center
+            Automated Operations Center
           </h1>
           <p className="text-text-muted font-medium">Proactive insights and conversational intelligence powered by live system data.</p>
         </div>

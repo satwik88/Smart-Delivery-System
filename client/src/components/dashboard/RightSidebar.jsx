@@ -113,12 +113,12 @@ const RightSidebar = () => {
         </div>
       </div>
 
-      {/* AI Insights */}
+      {/* Dispatch Insights */}
       <div className="premium-card p-6 bg-brand-blue border-transparent text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
         <div className="flex items-center gap-2 mb-6">
           <Zap size={18} className="text-warning" />
-          <h3 className="font-bold text-lg">AI Insights</h3>
+          <h3 className="font-bold text-lg">Dispatch Insights</h3>
         </div>
         <ul className="space-y-4">
           <li className="flex gap-3 items-start">
@@ -143,7 +143,7 @@ const RightSidebar = () => {
         
         <div className="relative z-10">
           <span className="inline-block bg-card-bg/20 text-white text-[10px] px-3 py-1 rounded-full font-bold backdrop-blur-md uppercase tracking-wider">
-            AI Optimization
+            Rules Engine
           </span>
         </div>
         <div className="relative z-10 flex justify-between items-end">

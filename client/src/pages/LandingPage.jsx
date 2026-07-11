@@ -59,8 +59,12 @@ const LandingPage = () => {
             animate="visible"
             variants={staggerContainer}
           >
-            <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 text-brand-blue font-bold text-sm mb-6 border border-brand-blue/20">
-              <Zap size={14} /> New: AI Route Optimization
+            <motion.div variants={fadeIn}>
+              <div className="flex justify-center lg:justify-start mb-8">
+                <span className="bg-brand-blue/10 text-brand-blue px-4 py-1.5 rounded-full text-sm font-bold border border-brand-blue/20 shadow-sm flex items-center gap-2">
+                  <Zap size={14} /> New: Algorithmic Route Optimization
+                </span>
+              </div>
             </motion.div>
             <motion.h1 variants={fadeIn} className="text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight mb-6 text-text-main">
               Enterprise Logistics, <br/><span className="text-brand-blue">Simplified.</span>
@@ -132,7 +136,7 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { icon: <MapPin className="text-brand-blue" size={24}/>, title: "Live Tracking", desc: "Pinpoint accuracy for every vehicle in your fleet with real-time Leaflet maps." },
-              { icon: <Zap className="text-yellow-500" size={24}/>, title: "AI Routing", desc: "Reduce fuel costs by up to 24% with our automated dispatch and routing algorithms." },
+              { icon: <Zap className="text-yellow-500" size={24}/>, title: "Algorithmic Routing", desc: "Reduce fuel costs by up to 24% with our automated dispatch and routing algorithms." },
               { icon: <BarChart2 className="text-green-500" size={24}/>, title: "Deep Analytics", desc: "Understand your operational bottlenecks with rich, interactive data visualizations." }
             ].map((f, i) => (
               <motion.div 

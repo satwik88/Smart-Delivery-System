@@ -3,12 +3,14 @@ import api from '../utils/api';
 import { Truck, Navigation, Settings, Plus, Search, Filter, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import VehicleDetailsDrawer from '../components/dashboard/VehicleDetailsDrawer';
+import AddVehicleModal from '../components/dashboard/AddVehicleModal';
 
 const FleetManagementModule = () => {
   const [vehicles, setVehicles] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchVehicles = useCallback(async () => {
@@ -55,7 +57,10 @@ const FleetManagementModule = () => {
             />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
           </div>
-          <button className="bg-brand-blue text-white rounded-full px-4 py-2 text-sm font-bold flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-brand-blue/20">
+          <button 
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-brand-blue text-white rounded-full px-4 py-2 text-sm font-bold flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-brand-blue/20"
+          >
             <Plus size={16} /> Add Vehicle
           </button>
         </div>
@@ -132,6 +137,11 @@ const FleetManagementModule = () => {
         vehicleId={selectedVehicleId} 
         onClose={() => { setIsDrawerOpen(false); setSelectedVehicleId(null); }}
         onUpdate={() => fetchVehicles()}
+      />
+      <AddVehicleModal 
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdded={() => fetchVehicles()}
       />
     </div>
   );

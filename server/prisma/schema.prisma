@@ -8,92 +8,99 @@ datasource db {
 }
 
 model companies {
-  id                Int        @id @default(autoincrement())
-  name              String     @db.VarChar(100)
-  subscription_tier String     @default("FREE") @db.VarChar(50)
-  status            String     @default("ACTIVE") @db.VarChar(50)
-  stripe_customer   String?    @db.VarChar(255)
-  logo_url          String?    @db.VarChar(255)
-  primary_color     String?    @db.VarChar(50)
-  allowed_ips       String?    @db.Text
-  created_at        DateTime   @default(now())
-  
-  users             users[]
-  warehouses        warehouses[]
-  roads             roads[]
-  vehicles          vehicles[]
-  packages          packages[]
-  vehicle_cargo     vehicle_cargo[]
-  resources         resources[]
-  tasks             tasks[]
-  task_edges        task_edges[]
-  orders            orders[]
-  order_items       order_items[]
-  order_events      order_events[]
-  order_templates   order_templates[]
-  maintenance_logs  maintenance_logs[]
-  driver_assignments driver_assignments[]
-  inventory_items   inventory_items[]
-  inventory_transactions inventory_transactions[]
-  benchmark_results benchmark_results[]
+  id                     Int                      @id @default(autoincrement())
+  name                   String                   @db.VarChar(100)
+  created_at             DateTime                 @default(now())
+  subscription_tier      String                   @default("FREE") @db.VarChar(50)
+  stripe_customer        String?                  @db.VarChar(255)
+  status                 String                   @default("ACTIVE") @db.VarChar(50)
+  allowed_ips            String?
+  logo_url               String?                  @db.VarChar(255)
+  primary_color          String?                  @db.VarChar(50)
+  timezone               String?                  @default("UTC")
+  currency               String?                  @default("USD")
+  date_format            String?                  @default("MM/DD/YYYY")
+  tax_id                 String?
+  support_email          String?
+  phone                  String?
+  address                String?
+  base_fare              Float?                   @default(5.00)
+  price_per_km           Float?                   @default(1.50)
+  max_delivery_radius    Float?                   @default(50)
+  api_keys               api_keys[]
+  audit_logs             audit_logs[]
+  benchmark_results      benchmark_results[]
+  dispatch_rules         dispatch_rules[]
+  driver_assignments     driver_assignments[]
   financial_transactions financial_transactions[]
-  dispatch_rules    dispatch_rules[]
-  notifications     notifications[]
-  api_keys          api_keys[]
-  audit_logs        audit_logs[]
-  plugins           plugins[]
+  inventory_items        inventory_items[]
+  inventory_transactions inventory_transactions[]
+  maintenance_logs       maintenance_logs[]
+  notifications          notifications[]
+  order_events           order_events[]
+  order_items            order_items[]
+  order_templates        order_templates[]
+  orders                 orders[]
+  packages               packages[]
+  plugins                plugins[]
+  resources              resources[]
+  roads                  roads[]
+  task_edges             task_edges[]
+  tasks                  tasks[]
+  users                  users[]
+  vehicle_cargo          vehicle_cargo[]
+  vehicles               vehicles[]
+  warehouses             warehouses[]
 }
 
 model users {
-  id            Int         @id @default(autoincrement())
-  company_id    Int?
-  company       companies?  @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  username      String      @unique @db.VarChar(50)
-  password_hash String      @db.VarChar(255)
-  role          users_role  @default(operator)
-  mfa_secret    String?     @db.VarChar(100)
-  mfa_enabled   Boolean     @default(false)
-  created_at    DateTime    @default(now())
-
-  driver_assignments driver_assignments[]
+  id                     Int                      @id @default(autoincrement())
+  company_id             Int?
+  username               String                   @unique @db.VarChar(50)
+  email                  String?                  @db.VarChar(255)
+  full_name              String?                  @db.VarChar(255)
+  password_hash          String                   @db.VarChar(255)
+  role                   users_role               @default(operator)
+  created_at             DateTime                 @default(now())
+  mfa_enabled            Boolean                  @default(false)
+  mfa_secret             String?                  @db.VarChar(100)
+  driver_assignments     driver_assignments[]
   inventory_transactions inventory_transactions[]
-  customer_orders    orders[]    @relation("customer_orders")
+  customer_orders        orders[]                 @relation("customer_orders")
+  company                companies?               @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
 }
 
 model warehouses {
-  id         Int        @id @default(autoincrement())
-  company_id Int
-  company    companies  @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  name       String     @db.VarChar(100)
-  pos_x      Float
-  pos_y      Float
-  
-  address       String?         @db.VarChar(255)
-  capacity_sqft Float?
-  manager_name  String?         @db.VarChar(100)
-  status        warehouse_status @default(ACTIVE)
-  
-  roads_from roads[]    @relation("roads_from_idTowarehouses")
-  roads_to   roads[]    @relation("roads_to_idTowarehouses")
-  packages   packages[]
-  orders_src orders[]   @relation("orders_source_warehouse_idTowarehouses")
-  orders_dst orders[]   @relation("orders_dest_warehouse_idTowarehouses")
+  id              Int               @id @default(autoincrement())
+  company_id      Int
+  name            String            @db.VarChar(100)
+  pos_x           Float
+  pos_y           Float
+  address         String?           @db.VarChar(255)
+  capacity_sqft   Float?
+  manager_name    String?           @db.VarChar(100)
+  status          warehouse_status  @default(ACTIVE)
   inventory_items inventory_items[]
+  orders_dst      orders[]          @relation("orders_dest_warehouse_idTowarehouses")
+  orders_src      orders[]          @relation("orders_source_warehouse_idTowarehouses")
+  packages        packages[]
+  roads_from      roads[]           @relation("roads_from_idTowarehouses")
+  roads_to        roads[]           @relation("roads_to_idTowarehouses")
+  company         companies         @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
 }
 
 model roads {
-  id         Int        @id @default(autoincrement())
-  company_id Int
-  company    companies  @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  from_id    Int
-  to_id      Int
-  distance   Float
-  cost       Float
-  
+  id             Int        @id @default(autoincrement())
+  company_id     Int
+  from_id        Int
+  to_id          Int
+  distance       Float
+  cost           Float
+  company        companies  @relation(fields: [company_id], references: [id], onDelete: Cascade)
   from_warehouse warehouses @relation("roads_from_idTowarehouses", fields: [from_id], references: [id], onDelete: Cascade)
   to_warehouse   warehouses @relation("roads_to_idTowarehouses", fields: [to_id], references: [id], onDelete: Cascade)
 
@@ -103,25 +110,23 @@ model roads {
 }
 
 model vehicles {
-  id              Int             @id @default(autoincrement())
-  company_id      Int
-  company         companies       @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  name            String          @db.VarChar(100)
-  capacity_weight Float
-  
-  type                 vehicle_type    @default(TRUCK)
-  status               vehicle_status  @default(ACTIVE)
-  license_plate        String?         @db.VarChar(50)
-  fuel_efficiency      Float?
+  id                   Int                  @id @default(autoincrement())
+  company_id           Int
+  name                 String               @db.VarChar(100)
+  capacity_weight      Float
   current_location_lat Float?
   current_location_lng Float?
-  last_service_date    DateTime?       @db.Timestamp(0)
-  total_distance       Float?          @default(0)
-  
-  vehicle_cargo   vehicle_cargo[]
-  orders          orders[]
-  maintenance_logs maintenance_logs[]
-  driver_assignments driver_assignments[]
+  fuel_efficiency      Float?
+  last_service_date    DateTime?            @db.Timestamp(0)
+  license_plate        String?              @db.VarChar(50)
+  status               vehicle_status       @default(ACTIVE)
+  total_distance       Float?               @default(0)
+  type                 vehicle_type         @default(TRUCK)
+  driver_assignments   driver_assignments[]
+  maintenance_logs     maintenance_logs[]
+  orders               orders[]
+  vehicle_cargo        vehicle_cargo[]
+  company              companies            @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
 }
@@ -129,12 +134,11 @@ model vehicles {
 model packages {
   id                       Int             @id @default(autoincrement())
   company_id               Int
-  company                  companies       @relation(fields: [company_id], references: [id], onDelete: Cascade)
   name                     String          @db.VarChar(100)
   weight                   Float
   value                    Float
   destination_warehouse_id Int?
-  
+  company                  companies       @relation(fields: [company_id], references: [id], onDelete: Cascade)
   destination_warehouse    warehouses?     @relation(fields: [destination_warehouse_id], references: [id])
   vehicle_cargo            vehicle_cargo[]
 
@@ -145,13 +149,12 @@ model packages {
 model vehicle_cargo {
   id         Int       @id @default(autoincrement())
   company_id Int
-  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   vehicle_id Int
   package_id Int
   selected   Boolean?  @default(false)
-  
-  vehicle    vehicles  @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
+  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   package    packages  @relation(fields: [package_id], references: [id], onDelete: Cascade)
+  vehicle    vehicles  @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
   @@index([package_id])
@@ -161,10 +164,10 @@ model vehicle_cargo {
 model resources {
   id         Int       @id @default(autoincrement())
   company_id Int
-  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   name       String    @db.VarChar(100)
   weight     Float
   value      Float
+  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
 }
@@ -172,11 +175,10 @@ model resources {
 model tasks {
   id         Int          @id @default(autoincrement())
   company_id Int
-  company    companies    @relation(fields: [company_id], references: [id], onDelete: Cascade)
   name       String       @db.VarChar(100)
-  
   edges_from task_edges[] @relation("task_edges_from_task_idTotasks")
   edges_to   task_edges[] @relation("task_edges_to_task_idTotasks")
+  company    companies    @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
 }
@@ -184,10 +186,9 @@ model tasks {
 model task_edges {
   id           Int       @id @default(autoincrement())
   company_id   Int
-  company      companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   from_task_id Int
   to_task_id   Int
-  
+  company      companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   from_task    tasks     @relation("task_edges_from_task_idTotasks", fields: [from_task_id], references: [id], onDelete: Cascade)
   to_task      tasks     @relation("task_edges_to_task_idTotasks", fields: [to_task_id], references: [id], onDelete: Cascade)
 
@@ -197,42 +198,40 @@ model task_edges {
 }
 
 model orders {
-  id                  Int           @id @default(autoincrement())
-  company_id          Int
-  company             companies     @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  customer_name       String        @db.VarChar(100)
-  budget              Float
-  created_at          DateTime?     @default(now()) @db.Timestamp(0)
-  tracking_code       String?       @unique @db.VarChar(20)
-  source_warehouse_id Int?
-  dest_warehouse_id   Int?
-  vehicle_id          Int?
-  customer_id         Int?
-  status              orders_status? @default(placed)
-  progress_pct        Float?        @default(0)
-  
-  scheduled_for          DateTime?    @db.Timestamp(0)
-  is_recurring           Boolean      @default(false)
-  recurrence_pattern     String?      @db.VarChar(50)
-  priority               order_priority @default(STANDARD)
-  order_type             order_type   @default(DELIVERY)
-  parent_order_id        Int?
-  delivery_notes         String?      @db.Text
-  dispatcher_notes       String?      @db.Text
-  customer_instructions  String?      @db.Text
-  signature_url          String?      @db.VarChar(500)
-  otp_code               String?      @db.VarChar(10)
-  barcode                String?      @db.VarChar(100)
-  attachments            Json?
-  
-  source_warehouse    warehouses?   @relation("orders_source_warehouse_idTowarehouses", fields: [source_warehouse_id], references: [id])
-  dest_warehouse      warehouses?   @relation("orders_dest_warehouse_idTowarehouses", fields: [dest_warehouse_id], references: [id])
-  vehicle             vehicles?     @relation(fields: [vehicle_id], references: [id])
-  customer            users?        @relation("customer_orders", fields: [customer_id], references: [id])
-  order_items         order_items[]
-  parent_order        orders?       @relation("orders_split", fields: [parent_order_id], references: [id])
-  child_orders        orders[]      @relation("orders_split")
-  events              order_events[]
+  id                    Int            @id @default(autoincrement())
+  company_id            Int
+  customer_name         String         @db.VarChar(100)
+  budget                Float
+  created_at            DateTime?      @default(now()) @db.Timestamp(0)
+  tracking_code         String?        @unique @db.VarChar(20)
+  source_warehouse_id   Int?
+  dest_warehouse_id     Int?
+  vehicle_id            Int?
+  status                orders_status? @default(placed)
+  progress_pct          Float?         @default(0)
+  attachments           Json?
+  barcode               String?        @db.VarChar(100)
+  customer_instructions String?
+  delivery_notes        String?
+  dispatcher_notes      String?
+  is_recurring          Boolean        @default(false)
+  order_type            order_type     @default(DELIVERY)
+  otp_code              String?        @db.VarChar(10)
+  parent_order_id       Int?
+  priority              order_priority @default(STANDARD)
+  recurrence_pattern    String?        @db.VarChar(50)
+  scheduled_for         DateTime?      @db.Timestamp(0)
+  signature_url         String?        @db.VarChar(500)
+  customer_id           Int?
+  events                order_events[]
+  order_items           order_items[]
+  company               companies      @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  customer              users?         @relation("customer_orders", fields: [customer_id], references: [id])
+  dest_warehouse        warehouses?    @relation("orders_dest_warehouse_idTowarehouses", fields: [dest_warehouse_id], references: [id])
+  parent_order          orders?        @relation("orders_split", fields: [parent_order_id], references: [id])
+  child_orders          orders[]       @relation("orders_split")
+  source_warehouse      warehouses?    @relation("orders_source_warehouse_idTowarehouses", fields: [source_warehouse_id], references: [id])
+  vehicle               vehicles?      @relation(fields: [vehicle_id], references: [id])
 
   @@index([company_id])
   @@index([dest_warehouse_id])
@@ -245,11 +244,10 @@ model orders {
 model order_items {
   id           Int       @id @default(autoincrement())
   company_id   Int
-  company      companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   order_id     Int
   product_name String    @db.VarChar(100)
   price        Float
-  
+  company      companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   order        orders    @relation(fields: [order_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
@@ -259,70 +257,70 @@ model order_items {
 model benchmark_results {
   id             Int       @id @default(autoincrement())
   company_id     Int
-  company        companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   algorithm_name String    @db.VarChar(50)
   dataset_size   Int
   comparisons    Int?
   swaps          Int?
   time_ms        Float
   run_at         DateTime? @default(now()) @db.Timestamp(0)
+  company        companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
 }
 
 model order_events {
-  id          Int      @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   company_id  Int
-  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   order_id    Int
-  order       orders   @relation(fields: [order_id], references: [id], onDelete: Cascade)
   status      orders_status
-  description String   @db.Text
-  created_at  DateTime @default(now()) @db.Timestamp(0)
+  description String
+  created_at  DateTime      @default(now()) @db.Timestamp(0)
+  company     companies     @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  order       orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
   @@index([order_id])
 }
 
 model order_templates {
-  id                    Int      @id @default(autoincrement())
-  company_id            Int
-  company               companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  name                  String   @db.VarChar(100)
-  default_priority      order_priority @default(STANDARD)
-  default_type          order_type @default(DELIVERY)
-  default_instructions  String?  @db.Text
-  created_at            DateTime @default(now()) @db.Timestamp(0)
+  id                   Int            @id @default(autoincrement())
+  company_id           Int
+  name                 String         @db.VarChar(100)
+  default_priority     order_priority @default(STANDARD)
+  default_type         order_type     @default(DELIVERY)
+  default_instructions String?
+  created_at           DateTime       @default(now()) @db.Timestamp(0)
+  company              companies      @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
 }
 
 model maintenance_logs {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   company_id  Int
-  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   vehicle_id  Int
-  vehicle     vehicles @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
-  description String   @db.Text
-  cost        Float    @default(0)
-  date        DateTime @default(now()) @db.Timestamp(0)
-  status      String   @default("COMPLETED") @db.VarChar(50)
-  
+  description String
+  cost        Float     @default(0)
+  date        DateTime  @default(now()) @db.Timestamp(0)
+  status      String    @default("COMPLETED") @db.VarChar(50)
+  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  vehicle     vehicles  @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
+
   @@index([company_id])
   @@index([vehicle_id])
 }
 
 model driver_assignments {
-  id          Int      @id @default(autoincrement())
-  company_id  Int
-  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  vehicle_id  Int
-  vehicle     vehicles @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
-  user_id     Int
-  user        users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  start_time  DateTime @default(now()) @db.Timestamp(0)
-  end_time    DateTime? @db.Timestamp(0)
-  status      String   @default("ACTIVE") @db.VarChar(50)
+  id         Int       @id @default(autoincrement())
+  company_id Int
+  vehicle_id Int
+  user_id    Int
+  start_time DateTime  @default(now()) @db.Timestamp(0)
+  end_time   DateTime? @db.Timestamp(0)
+  status     String    @default("ACTIVE") @db.VarChar(50)
+  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  user       users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  vehicle    vehicles  @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
   @@index([vehicle_id])
@@ -330,20 +328,19 @@ model driver_assignments {
 }
 
 model inventory_items {
-  id              Int        @id @default(autoincrement())
-  company_id      Int
-  company         companies  @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  warehouse_id    Int
-  warehouse       warehouses @relation(fields: [warehouse_id], references: [id], onDelete: Cascade)
-  sku             String     @db.VarChar(50)
-  name            String     @db.VarChar(100)
-  description     String?    @db.Text
-  quantity        Int        @default(0)
-  reorder_point   Int        @default(10)
-  cost_price      Float      @default(0)
-  selling_price   Float      @default(0)
-  
-  transactions    inventory_transactions[]
+  id            Int                      @id @default(autoincrement())
+  company_id    Int
+  warehouse_id  Int
+  sku           String                   @db.VarChar(50)
+  name          String                   @db.VarChar(100)
+  description   String?
+  quantity      Int                      @default(0)
+  reorder_point Int                      @default(10)
+  cost_price    Float                    @default(0)
+  selling_price Float                    @default(0)
+  company       companies                @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  warehouse     warehouses               @relation(fields: [warehouse_id], references: [id], onDelete: Cascade)
+  transactions  inventory_transactions[]
 
   @@index([company_id])
   @@index([warehouse_id])
@@ -351,20 +348,20 @@ model inventory_items {
 }
 
 model inventory_transactions {
-  id                Int              @id @default(autoincrement())
-  company_id        Int
-  company           companies        @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  item_id           Int
-  item              inventory_items  @relation(fields: [item_id], references: [id], onDelete: Cascade)
-  type              transaction_type
-  quantity_change   Int
-  previous_quantity Int
-  new_quantity      Int
-  user_id           Int?
-  user              users?           @relation(fields: [user_id], references: [id])
+  id                 Int              @id @default(autoincrement())
+  company_id         Int
+  item_id            Int
+  type               transaction_type
+  quantity_change    Int
+  previous_quantity  Int
+  new_quantity       Int
+  user_id            Int?
   reference_order_id Int?
-  notes             String?          @db.Text
-  created_at        DateTime         @default(now()) @db.Timestamp(0)
+  notes              String?
+  created_at         DateTime         @default(now()) @db.Timestamp(0)
+  company            companies        @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  item               inventory_items  @relation(fields: [item_id], references: [id], onDelete: Cascade)
+  user               users?           @relation(fields: [user_id], references: [id])
 
   @@index([company_id])
   @@index([item_id])
@@ -372,15 +369,15 @@ model inventory_transactions {
 }
 
 model financial_transactions {
-  id              Int                            @id @default(autoincrement())
-  company_id      Int
-  company         companies                      @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  type            financial_transaction_type
-  category        financial_transaction_category
-  amount          Float
-  description     String                         @db.VarChar(255)
-  reference_id    String?                        @db.VarChar(100)
-  created_at      DateTime                       @default(now()) @db.Timestamp(0)
+  id           Int                            @id @default(autoincrement())
+  company_id   Int
+  type         financial_transaction_type
+  category     financial_transaction_category
+  amount       Float
+  description  String                         @db.VarChar(255)
+  reference_id String?                        @db.VarChar(100)
+  created_at   DateTime                       @default(now()) @db.Timestamp(0)
+  company      companies                      @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
   @@index([type])
@@ -390,7 +387,6 @@ model financial_transactions {
 model dispatch_rules {
   id                 Int       @id @default(autoincrement())
   company_id         Int
-  company            companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   name               String    @db.VarChar(100)
   condition_field    String    @db.VarChar(50)
   condition_operator String    @db.VarChar(50)
@@ -399,6 +395,7 @@ model dispatch_rules {
   action_value       String    @db.VarChar(100)
   is_active          Boolean   @default(true)
   created_at         DateTime  @default(now()) @db.Timestamp(0)
+  company            companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
 }
@@ -406,52 +403,52 @@ model dispatch_rules {
 model notifications {
   id         Int       @id @default(autoincrement())
   company_id Int
-  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   title      String    @db.VarChar(150)
-  message    String    @db.Text
+  message    String
   type       String    @db.VarChar(50)
   is_read    Boolean   @default(false)
   created_at DateTime  @default(now()) @db.Timestamp(0)
+  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
 }
 
 model api_keys {
-  id          Int       @id @default(autoincrement())
-  company_id  Int
-  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  key         String    @unique @db.VarChar(100)
-  name        String    @db.VarChar(100)
-  last_used   DateTime?
-  created_at  DateTime  @default(now()) @db.Timestamp(0)
-  
+  id         Int       @id @default(autoincrement())
+  company_id Int
+  key        String    @unique @db.VarChar(100)
+  name       String    @db.VarChar(100)
+  last_used  DateTime?
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
+
   @@index([company_id])
 }
 
 model audit_logs {
   id          Int       @id @default(autoincrement())
   company_id  Int
-  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
   user_id     Int?
   action      String    @db.VarChar(100)
-  description String    @db.Text
+  description String
   ip_address  String?   @db.VarChar(50)
   created_at  DateTime  @default(now()) @db.Timestamp(0)
+  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
   @@index([company_id])
 }
 
 model plugins {
-  id          Int       @id @default(autoincrement())
-  company_id  Int
-  company     companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
-  plugin_id   String    @db.VarChar(100)
-  config      Json?
-  is_active   Boolean   @default(true)
-  created_at  DateTime  @default(now()) @db.Timestamp(0)
+  id         Int       @id @default(autoincrement())
+  company_id Int
+  plugin_id  String    @db.VarChar(100)
+  config     Json?
+  is_active  Boolean   @default(true)
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+  company    companies @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
-  @@index([company_id])
   @@unique([company_id, plugin_id])
+  @@index([company_id])
 }
 
 enum orders_status {
@@ -506,7 +503,7 @@ enum users_role {
   dispatcher
   driver
   customer
-  operator // Keeping this as a legacy role for existing data compatibility if needed
+  operator
 }
 
 enum financial_transaction_type {
