@@ -1,12 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TrendingUp, Users, Package, AlertTriangle, ArrowUpRight, ArrowDownRight, Download, FileText, FileSpreadsheet } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Legend, LineChart, Line } from 'recharts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '../api';
 
 const BusinessIntelligenceModule = () => {
     const [showExportMenu, setShowExportMenu] = useState(false);
+    const [benchmarks, setBenchmarks] = useState([]);
+
+    useEffect(() => {
+        const fetchBenchmarks = async () => {
+            try {
+                const res = await api.get('/dashboard/benchmarks');
+                const grouped = {};
+                res.data.forEach(b => {
+                    if (!grouped[b.dataset_size]) grouped[b.dataset_size] = { size: b.dataset_size };
+                    grouped[b.dataset_size][b.algorithm_name] = b.time_ms;
+                });
+                setBenchmarks(Object.values(grouped).sort((a, b) => a.size - b.size));
+            } catch (err) {
+                console.error("Failed to load benchmarks", err);
+            }
+        };
+        fetchBenchmarks();
+    }, []);
 
     // Mock data for charts
     const revenueData = [
@@ -81,6 +100,19 @@ const BusinessIntelligenceModule = () => {
         link.click();
         document.body.removeChild(link);
         setShowExportMenu(false);
+    };
+
+    const algoColors = {
+        dijkstra: '#3b82f6',
+        floydWarshall: '#ef4444',
+        warshall: '#f59e0b',
+        quickSort: '#10b981',
+        mergeSort: '#8b5cf6',
+        selectionSort: '#6366f1',
+        knapsack01: '#ec4899',
+        subsetSum: '#14b8a6',
+        prim: '#f97316',
+        kruskal: '#06b6d4'
     };
 
     return (
@@ -222,6 +254,53 @@ const BusinessIntelligenceModule = () => {
                     </div>
                 </motion.div>
             </div>
+
+            {/* Algorithm Benchmarks */}
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="bg-card-bg border border-border-main p-6 rounded-2xl min-h-[400px] flex flex-col mt-6"
+            >
+                <h3 className="font-bold text-lg mb-2 text-text-main">Core Algorithm Performance Benchmarks</h3>
+                <p className="text-text-muted text-sm mb-6">Real measured execution time (ms) against varying dataset sizes for our routing and placement algorithms.</p>
+                <div className="flex-1 w-full h-[350px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={benchmarks} margin={{ top: 10, right: 30, left: -20, bottom: 10 }}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                            <XAxis 
+                                dataKey="size" 
+                                label={{ value: 'Dataset Size (N)', position: 'insideBottom', offset: -5 }} 
+                                axisLine={false} 
+                                tickLine={false} 
+                                tick={{ fontSize: 12, fill: '#9ca3af' }} 
+                            />
+                            <YAxis 
+                                label={{ value: 'Execution Time (ms)', angle: -90, position: 'insideLeft' }} 
+                                axisLine={false} 
+                                tickLine={false} 
+                                tick={{ fontSize: 12, fill: '#9ca3af' }} 
+                            />
+                            <RechartsTooltip 
+                                contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                            />
+                            <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                            {Object.keys(algoColors).map(algo => (
+                                <Line 
+                                    key={algo}
+                                    type="monotone" 
+                                    dataKey={algo} 
+                                    stroke={algoColors[algo]} 
+                                    strokeWidth={3} 
+                                    dot={{ r: 4, strokeWidth: 2 }} 
+                                    activeDot={{ r: 6 }} 
+                                    connectNulls
+                                />
+                            ))}
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+            </motion.div>
         </motion.div>
     );
 };

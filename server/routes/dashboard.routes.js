@@ -72,4 +72,18 @@ router.get('/summary', async (req, res) => {
     }
 });
 
+// Get Benchmarks
+router.get('/benchmarks', async (req, res) => {
+    try {
+        const companyId = req.user.company_id;
+        const results = await prisma.benchmark_results.findMany({
+            where: { company_id: companyId },
+            orderBy: { dataset_size: 'asc' }
+        });
+        res.json(results);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;
