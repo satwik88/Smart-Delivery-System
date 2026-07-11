@@ -4,7 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsToolti
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { motion, AnimatePresence } from 'framer-motion';
-import api from '../api';
+import api from '../utils/api';
 
 const BusinessIntelligenceModule = () => {
     const [showExportMenu, setShowExportMenu] = useState(false);
