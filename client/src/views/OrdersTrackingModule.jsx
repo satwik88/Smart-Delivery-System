@@ -4,6 +4,8 @@ import { Truck, CheckCircle, Search, Filter, MoreHorizontal, PackageOpen, Upload
 import { motion } from 'framer-motion';
 import OrderDetailsDrawer from '../components/dashboard/OrderDetailsDrawer';
 import BulkOrderModal from '../components/dashboard/BulkOrderModal';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const OrdersTrackingModule = () => {
   const [orders, setOrders] = useState([]);
@@ -13,6 +15,7 @@ const OrdersTrackingModule = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -45,6 +48,52 @@ const OrdersTrackingModule = () => {
   
   const paginated = filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text('Orders Report', 14, 22);
+    doc.setFontSize(11);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+    
+    doc.autoTable({
+        startY: 40,
+        head: [['Tracking Code', 'Customer', 'Status', 'Progress']],
+        body: filtered.map(o => [
+            o.tracking_code || 'N/A', 
+            o.customer_name || 'N/A', 
+            o.status || 'N/A', 
+            `${Number(o.progress_pct || 0).toFixed(0)}%`
+        ]),
+        theme: 'grid',
+        headStyles: { fillColor: [59, 130, 246] }
+    });
+    doc.save('orders-report.pdf');
+    setShowExportMenu(false);
+  };
+
+  const handleExportCSV = () => {
+    const headers = ['Tracking Code', 'Customer', 'Status', 'Progress'];
+    const rows = filtered.map(o => [
+        o.tracking_code || 'N/A', 
+        o.customer_name || 'N/A', 
+        o.status || 'N/A', 
+        `${Number(o.progress_pct || 0).toFixed(0)}%`
+    ]);
+    
+    const csvContent = "data:text/csv;charset=utf-8," 
+        + headers.join(",") + "\n"
+        + rows.map(e => e.join(",")).join("\n");
+        
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "orders-report.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setShowExportMenu(false);
+  };
+
   const getStatusStyle = (status) => {
     if (status === 'delivered') return 'bg-green-100 text-green-700 border-green-200';
     if (status === 'in_transit') return 'bg-blue-100 text-brand-blue border-blue-200';
@@ -52,7 +101,11 @@ const OrdersTrackingModule = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col gap-6"
+    >
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-black text-text-main">Orders ({orders.length})</h1>
@@ -69,6 +122,27 @@ const OrdersTrackingModule = () => {
             />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
           </div>
+          
+          <div className="relative">
+              <button 
+                  onClick={() => setShowExportMenu(!showExportMenu)}
+                  className="bg-card-bg border border-border-main text-text-main rounded-full px-4 py-2 text-sm font-bold flex items-center gap-2 hover:bg-surface-bg transition-colors shadow-sm"
+              >
+                  Export
+              </button>
+              
+              {showExportMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-card-bg rounded-xl shadow-xl border border-border-main overflow-hidden z-10">
+                      <button onClick={handleExportPDF} className="w-full px-4 py-3 text-left text-sm font-semibold hover:bg-surface-bg transition-colors border-b border-border-main">
+                          Export as PDF
+                      </button>
+                      <button onClick={handleExportCSV} className="w-full px-4 py-3 text-left text-sm font-semibold hover:bg-surface-bg transition-colors">
+                          Export as CSV
+                      </button>
+                  </div>
+              )}
+          </div>
+
           <button 
             onClick={() => setIsBulkModalOpen(true)}
             className="bg-brand-blue text-white rounded-full px-4 py-2 text-sm font-bold flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-lg shadow-brand-blue/20"
@@ -148,7 +222,17 @@ const OrdersTrackingModule = () => {
               </motion.tr>
             )) : (
               <tr>
-                <td colSpan="6" className="py-8 text-center text-text-muted font-medium">No orders found.</td>
+                <td colSpan="6" className="py-16 text-center">
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }} 
+                    animate={{ opacity: 1, scale: 1 }} 
+                    className="flex flex-col items-center justify-center text-text-muted"
+                  >
+                    <PackageOpen size={48} className="mb-4 text-border-main" strokeWidth={1} />
+                    <p className="font-bold text-lg text-text-main mb-1">No orders found</p>
+                    <p className="text-sm font-medium max-w-xs">We couldn't find any orders matching your criteria. Try adjusting your filters or search term.</p>
+                  </motion.div>
+                </td>
               </tr>
             )}
           </tbody>
@@ -190,7 +274,7 @@ const OrdersTrackingModule = () => {
         onClose={() => setIsBulkModalOpen(false)}
         onImported={() => fetchOrders()}
       />
-    </div>
+    </motion.div>
   );
 };
 
