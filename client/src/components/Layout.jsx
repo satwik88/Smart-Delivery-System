@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { 
   Package, 
   LayoutDashboard, 
@@ -17,13 +17,11 @@ import {
   Truck,
   Layers,
   Brain,
-  Zap,
-  Bell
+  Zap
 } from 'lucide-react';
 import clsx from 'clsx';
-import { motion, AnimatePresence } from 'framer-motion';
+
 import { useTheme } from '../context/ThemeContext';
-import { useNotifications } from '../context/NotificationContext';
 import CommandPalette from './CommandPalette';
 import ProfileDropdown from './ProfileDropdown';
 import AIAssistantWidget from './AIAssistantWidget';
@@ -34,12 +32,9 @@ import AddDriverModal from './dashboard/AddDriverModal';
 
 const Layout = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
-  const { notifications, unreadCount, markAsRead } = useNotifications();
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false);
   const [isAddDriverOpen, setIsAddDriverOpen] = useState(false);
 

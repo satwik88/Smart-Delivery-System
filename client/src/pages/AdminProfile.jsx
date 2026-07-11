@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { User, Mail, Phone, Building, Shield, Key, Edit3 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User, Mail, Shield, Key, Edit3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../utils/api';
 
@@ -41,7 +41,7 @@ const AdminProfile = () => {
       });
       setPersonalStatus('Saved successfully!');
       setTimeout(() => setPersonalStatus(''), 3000);
-    } catch (err) {
+    } catch {
       setPersonalStatus('Error saving profile');
     }
   };
