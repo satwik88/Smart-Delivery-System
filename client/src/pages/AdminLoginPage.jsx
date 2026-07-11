@@ -88,7 +88,7 @@ const AdminLoginPage = () => {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Master Password</label>
+              <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Password</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-muted">
                   <Lock size={18} />
@@ -126,7 +126,7 @@ const AdminLoginPage = () => {
                   Authenticating...
                 </>
               ) : (
-                'Unlock Admin Panel'
+                'Sign In'
               )}
             </button>
           </form>
