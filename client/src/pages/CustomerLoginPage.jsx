@@ -5,27 +5,37 @@ import { User, Lock, ArrowLeft, Loader2, Package } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CustomerLoginPage = () => {
+  const [isRegister, setIsRegister] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [companyId, setCompanyId] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!username || !password) return;
+    if (!username || !password || (isRegister && (!email || !companyId))) return;
     
     setLoading(true);
     setError(false);
     
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/login`, { username, password });
-      if (res.data.token) {
-        if (res.data.user.role === 'customer') {
-            localStorage.setItem('customerToken', res.data.token);
-            navigate('/customer/portal');
-        } else {
-            setError(true);
+      if (isRegister) {
+        await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/register-customer`, { username, password, email, companyId });
+        setIsRegister(false);
+        setPassword('');
+        alert("Registration successful. Please log in.");
+      } else {
+        const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/login`, { username, password });
+        if (res.data.token) {
+          if (res.data.user.role === 'customer') {
+              localStorage.setItem('customerToken', res.data.token);
+              navigate('/customer/portal');
+          } else {
+              setError(true);
+          }
         }
       }
     } catch (error) {
@@ -66,10 +76,36 @@ const CustomerLoginPage = () => {
               <Package className="text-brand-blue relative z-10" size={32} strokeWidth={1.5} />
             </div>
             <h2 className="text-2xl font-black tracking-tight mb-2">Customer Portal</h2>
-            <p className="text-text-muted text-sm font-medium">Log in to track your deliveries and order history.</p>
+            <p className="text-text-muted text-sm font-medium">{isRegister ? "Create an account to track your orders." : "Log in to track your deliveries and order history."}</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
+            {isRegister && (
+              <>
+                <div>
+                  <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Email Address</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-surface-bg border border-border-main focus:border-brand-blue focus:ring-brand-blue/20 rounded-xl px-4 py-3.5 text-sm font-semibold text-text-main focus:outline-none focus:ring-4 transition-all"
+                    placeholder="Enter your email..."
+                    required={isRegister}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Company ID Code</label>
+                  <input
+                    type="text"
+                    value={companyId}
+                    onChange={(e) => setCompanyId(e.target.value)}
+                    className="w-full bg-surface-bg border border-border-main focus:border-brand-blue focus:ring-brand-blue/20 rounded-xl px-4 py-3.5 text-sm font-semibold text-text-main focus:outline-none focus:ring-4 transition-all"
+                    placeholder="Enter delivery company code..."
+                    required={isRegister}
+                  />
+                </div>
+              </>
+            )}
             <div>
               <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Username</label>
               <div className="relative">
@@ -130,6 +166,15 @@ const CustomerLoginPage = () => {
               )}
             </button>
           </form>
+
+          <div className="mt-6 text-center">
+            <button 
+              onClick={() => setIsRegister(!isRegister)}
+              className="text-xs font-bold text-text-muted hover:text-brand-blue transition-colors"
+            >
+              {isRegister ? "Already have an account? Log in" : "Need an account? Register"}
+            </button>
+          </div>
         </motion.div>
         
         <p className="text-center text-xs font-bold text-text-muted mt-8">

@@ -34,13 +34,17 @@ router.get('/metrics', superAdminOnly, async (req, res) => {
         const totalCompanies = await prisma.companies.count();
         const activeCompanies = await prisma.companies.count({ where: { status: 'ACTIVE' } });
         
-        // Approximate MRR based on subscription tier (mock data mapping)
-        const companies = await prisma.companies.findMany({ select: { subscription_tier: true } });
-        let mrr = 0;
-        companies.forEach(c => {
-            if (c.subscription_tier === 'PRO') mrr += 49;
-            // Add other tiers if they exist
+        // Calculate MRR from actual financial transactions (REVENUE)
+        const revenueTransactions = await prisma.financial_transactions.aggregate({
+            _sum: {
+                amount: true
+            },
+            where: {
+                type: 'REVENUE'
+            }
         });
+        
+        const mrr = revenueTransactions._sum.amount || 0;
 
         res.json({
             total_companies: totalCompanies,

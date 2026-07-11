@@ -60,6 +60,44 @@ router.post('/register-company', async (req, res) => {
     }
 });
 
+// POST /api/auth/register-customer
+router.post('/register-customer', async (req, res) => {
+    try {
+        const { username, password, email, companyId } = req.body;
+        if (!username || !password || !email || !companyId) {
+            return res.status(400).json({ error: 'username, password, email, and companyId are required' });
+        }
+
+        const existingUser = await prisma.users.findUnique({
+            where: { username }
+        });
+
+        if (existingUser) {
+            return res.status(409).json({ error: 'Username already exists' });
+        }
+
+        const password_hash = await bcrypt.hash(password, 10);
+
+        const user = await prisma.users.create({
+            data: {
+                company_id: parseInt(companyId),
+                username,
+                email,
+                password_hash,
+                role: 'customer'
+            }
+        });
+
+        res.status(201).json({
+            message: 'Customer registered successfully',
+            userId: user.id
+        });
+    } catch (err) {
+        console.error("Register Customer Error:", err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
     try {

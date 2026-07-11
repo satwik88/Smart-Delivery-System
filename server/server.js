@@ -18,6 +18,10 @@ const io = new Server(server, {
 
 // Middleware
 app.use(cors());
+
+// Webhook must be parsed as raw body
+app.use('/api/billing/webhook', express.raw({ type: 'application/json' }), require('./routes/billing.webhook.routes'));
+
 app.use(express.json());
 
 // Routes
@@ -66,7 +70,6 @@ const PORT = process.env.PORT || 5000;
 // Initialize live operations engine
 const { initLiveTracking } = require('./services/liveTracking');
 
-// We need to pass `io` to app locals so we can use it in routes without circular dependencies
 app.set('io', io);
 
 initLiveTracking(io);

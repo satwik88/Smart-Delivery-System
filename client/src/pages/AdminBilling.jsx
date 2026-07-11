@@ -24,13 +24,12 @@ const AdminBilling = () => {
     // Check URL params for success/cancel
     const params = new URLSearchParams(window.location.search);
     if (params.get('success')) {
-      alert("Payment successful! Your account is being upgraded.");
-      // For this demo, since we don't have stripe webhooks set up on local, 
-      // we'll hit the manual success endpoint to upgrade the DB.
-      api.post('/billing/manual-success').then(() => {
-        setBillingStatus(prev => ({ ...prev, tier: 'PRO' }));
-        window.history.replaceState({}, '', '/admin/billing');
-      });
+      alert("Payment successful! Your account is being upgraded via webhook. It may take a moment to reflect.");
+      // The webhook handles the upgrade in the background
+      setTimeout(() => {
+        fetchStatus();
+      }, 2000);
+      window.history.replaceState({}, '', '/admin/billing');
     }
     if (params.get('canceled')) {
       alert("Payment canceled.");

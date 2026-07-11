@@ -10,6 +10,7 @@ const CreateOrderModal = ({ isOpen, onClose, onCreated }) => {
   
   const [formData, setFormData] = useState({
     customer_name: '',
+    customer_email: '',
     budget: '',
     source_warehouse_id: '',
     dest_warehouse_id: '',
@@ -39,6 +40,7 @@ const CreateOrderModal = ({ isOpen, onClose, onCreated }) => {
       await api.post('/orders', formData);
       setFormData({
         customer_name: '',
+        customer_email: '',
         budget: '',
         source_warehouse_id: '',
         dest_warehouse_id: '',
@@ -102,6 +104,18 @@ const CreateOrderModal = ({ isOpen, onClose, onCreated }) => {
                   value={formData.customer_name}
                   onChange={handleChange}
                   placeholder="e.g. Acme Corp" 
+                  className="w-full bg-surface-bg border border-border-main rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-brand-blue outline-none text-text-main"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-text-main mb-1.5">Customer Email (Optional)</label>
+                <input 
+                  type="email" 
+                  name="customer_email"
+                  value={formData.customer_email}
+                  onChange={handleChange}
+                  placeholder="e.g. acme@example.com (links to Customer Portal)" 
                   className="w-full bg-surface-bg border border-border-main rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-brand-blue outline-none text-text-main"
                 />
               </div>

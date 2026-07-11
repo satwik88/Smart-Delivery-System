@@ -78,10 +78,33 @@ router.post('/', async (req, res) => {
     try {
         const companyId = req.user.company_id;
         const { 
-            customer_name, budget, source_warehouse_id, dest_warehouse_id, vehicle_id,
+            customer_name, customer_email, budget, source_warehouse_id, dest_warehouse_id, vehicle_id,
             scheduled_for, is_recurring, recurrence_pattern, priority, order_type,
             delivery_notes, dispatcher_notes, customer_instructions
         } = req.body;
+        
+        let assignedCustomerId = null;
+        if (customer_email) {
+            const bcrypt = require('bcrypt'); // Make sure bcrypt is available in this route
+            let customerUser = await prisma.users.findFirst({
+                where: { email: customer_email, company_id: companyId, role: 'customer' }
+            });
+            
+            if (!customerUser) {
+                const defaultPassword = await bcrypt.hash('customer123', 10);
+                customerUser = await prisma.users.create({
+                    data: {
+                        username: customer_email,
+                        email: customer_email,
+                        full_name: customer_name || 'Walk-in Customer',
+                        password_hash: defaultPassword,
+                        role: 'customer',
+                        company_id: companyId
+                    }
+                });
+            }
+            assignedCustomerId = customerUser.id;
+        }
         
         const activeRules = await prisma.dispatch_rules.findMany({
             where: { company_id: companyId, is_active: true }
@@ -109,6 +132,7 @@ router.post('/', async (req, res) => {
         const order = await prisma.orders.create({
             data: {
                 company_id: companyId,
+                customer_id: assignedCustomerId,
                 customer_name: customer_name || 'Walk-in Customer',
                 budget: parseFloat(budget) || 0,
                 source_warehouse_id: source_warehouse_id ? parseInt(source_warehouse_id) : null,

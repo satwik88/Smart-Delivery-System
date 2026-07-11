@@ -69,19 +69,6 @@ router.post('/upgrade', async (req, res) => {
     }
 });
 
-// POST /api/billing/manual-success 
-// A fallback endpoint to easily upgrade the account without a stripe webhook
-router.post('/manual-success', async (req, res) => {
-    try {
-        const companyId = req.user.company_id;
-        await prisma.companies.update({
-            where: { id: companyId },
-            data: { subscription_tier: 'PRO' }
-        });
-        res.json({ success: true, message: 'Upgraded to PRO' });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to upgrade' });
-    }
-});
+
 
 module.exports = router;
