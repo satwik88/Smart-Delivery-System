@@ -5,6 +5,7 @@ import { Lock, ShieldCheck, ArrowLeft, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AdminLoginPage = () => {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -12,13 +13,13 @@ const AdminLoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!password) return;
+    if (!username || !password) return;
     
     setLoading(true);
     setError(false);
     
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/login`, { username: 'admin', password });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/auth/login`, { username, password });
       if (res.data.token) {
         if (res.data.user.role === 'super_admin') {
             localStorage.setItem('superAdminToken', res.data.token);
@@ -66,10 +67,26 @@ const AdminLoginPage = () => {
               <ShieldCheck className="text-brand-blue relative z-10" size={32} strokeWidth={1.5} />
             </div>
             <h2 className="text-2xl font-black tracking-tight mb-2">Admin Portal</h2>
-            <p className="text-text-muted text-sm font-medium">Enter your master password to access the logistics dashboard.</p>
+            <p className="text-text-muted text-sm font-medium">Enter your credentials to access the logistics dashboard.</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Username</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-muted">
+                  <ShieldCheck size={18} />
+                </div>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className={`w-full bg-surface-bg border ${error ? 'border-red-500/50 focus:ring-red-500/20' : 'border-border-main focus:border-brand-blue focus:ring-brand-blue/20'} rounded-xl pl-11 pr-4 py-3.5 text-sm font-semibold text-text-main focus:outline-none focus:ring-4 transition-all placeholder:text-text-muted/50`}
+                  placeholder="Enter your username..."
+                  autoFocus
+                />
+              </div>
+            </div>
             <div>
               <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Master Password</label>
               <div className="relative">
@@ -82,7 +99,6 @@ const AdminLoginPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className={`w-full bg-surface-bg border ${error ? 'border-red-500/50 focus:ring-red-500/20' : 'border-border-main focus:border-brand-blue focus:ring-brand-blue/20'} rounded-xl pl-11 pr-4 py-3.5 text-sm font-semibold text-text-main focus:outline-none focus:ring-4 transition-all placeholder:text-text-muted/50`}
                   placeholder="Enter secure password..."
-                  autoFocus
                 />
               </div>
               <AnimatePresence>
@@ -101,8 +117,8 @@ const AdminLoginPage = () => {
 
             <button
               type="submit"
-              disabled={loading || !password}
-              className="w-full bg-brand-blue text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-blue/25 hover:bg-blue-700 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:hover:translate-y-0 transition-all"
+              disabled={loading || !username || !password}
+              className="w-full bg-brand-blue text-white py-3.5 mt-2 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-brand-blue/25 hover:bg-blue-700 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:hover:translate-y-0 transition-all"
             >
               {loading ? (
                 <>
@@ -114,6 +130,10 @@ const AdminLoginPage = () => {
               )}
             </button>
           </form>
+
+          <p className="text-center text-sm font-semibold text-text-muted mt-6">
+            Don't have an account? <Link to="/register" className="text-brand-blue hover:underline">Register your company</Link>
+          </p>
         </motion.div>
         
         <p className="text-center text-xs font-bold text-text-muted mt-8">

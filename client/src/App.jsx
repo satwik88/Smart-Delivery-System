@@ -9,6 +9,7 @@ import CustomerPortalModule from './views/CustomerPortalModule';
 
 // Admin Pages
 import AdminLoginPage from './pages/AdminLoginPage';
+import AdminRegisterPage from './pages/AdminRegisterPage';
 import AdminGuard from './components/AdminGuard';
 import SuperAdminGuard from './components/SuperAdminGuard';
 import SuperAdminDashboard from './views/SuperAdminDashboard';
@@ -52,6 +53,7 @@ function App() {
         
         {/* Phase 3: Admin Routes */}
         <Route path="/admin" element={<AdminLoginPage />} />
+        <Route path="/register" element={<AdminRegisterPage />} />
         
         {/* Phase 13: Super Admin Routes */}
         <Route path="/superadmin" element={<SuperAdminGuard />}>
