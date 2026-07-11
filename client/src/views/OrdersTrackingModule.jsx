@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import OrderDetailsDrawer from '../components/dashboard/OrderDetailsDrawer';
 import BulkOrderModal from '../components/dashboard/BulkOrderModal';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 const OrdersTrackingModule = () => {
   const [orders, setOrders] = useState([]);
@@ -55,7 +55,7 @@ const OrdersTrackingModule = () => {
     doc.setFontSize(11);
     doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
     
-    doc.autoTable({
+    autoTable(doc, {
         startY: 40,
         head: [['Tracking Code', 'Customer', 'Status', 'Progress']],
         body: filtered.map(o => [

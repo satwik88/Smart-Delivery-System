@@ -27,6 +27,7 @@ import { useNotifications } from '../context/NotificationContext';
 import CommandPalette from './CommandPalette';
 import ProfileDropdown from './ProfileDropdown';
 import AIAssistantWidget from './AIAssistantWidget';
+import NotificationDropdown from './NotificationDropdown';
 
 const Layout = () => {
   const location = useLocation();

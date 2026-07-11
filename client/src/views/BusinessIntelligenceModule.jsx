@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TrendingUp, Users, Package, AlertTriangle, ArrowUpRight, ArrowDownRight, Download, FileText, FileSpreadsheet } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BusinessIntelligenceModule = () => {
@@ -35,7 +35,7 @@ const BusinessIntelligenceModule = () => {
         doc.setTextColor(100);
         doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
         
-        doc.autoTable({
+        autoTable(doc, {
             startY: 40,
             head: [['Metric', 'Value', 'Trend']],
             body: [
@@ -48,7 +48,7 @@ const BusinessIntelligenceModule = () => {
             headStyles: { fillColor: [59, 130, 246] }
         });
 
-        doc.autoTable({
+        autoTable(doc, {
             startY: doc.lastAutoTable.finalY + 20,
             head: [['Region', 'Projected Demand']],
             body: demandData.map(d => [d.name, d.demand.toLocaleString()]),
